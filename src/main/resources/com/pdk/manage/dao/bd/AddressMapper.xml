@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.bd.AddressDao" >
+  <resultMap id="AddressResultMap" type="com.pdk.manage.model.bd.Address" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="receiver" property="receiver" jdbcType="VARCHAR" />
+    <result column="city_id" property="cityId" jdbcType="VARCHAR" />
+    <result column="area_id" property="areaId" jdbcType="CHAR" />
+    <result column="user_id" property="userId" jdbcType="CHAR" />
+    <result column="street" property="street" jdbcType="SMALLINT" />
+    <result column="full_address" property="fullAddress" jdbcType="SMALLINT" />
+    <result column="post_num" property="postNum" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="is_default" property="isDefault" jdbcType="CHAR" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+    <association property="city" javaType="com.pdk.manage.model.bd.CityArea"
+                 resultMap="com.pdk.manage.dao.bd.CityAreaDao.CityAreaResultMap" columnPrefix="city_"/>
+    <association property="area" javaType="com.pdk.manage.model.bd.CityArea"
+                 resultMap="com.pdk.manage.dao.bd.CityAreaDao.CityAreaResultMap" columnPrefix="area_"/>
+  </resultMap>
+
+  <select id="selectByUserId" resultMap="AddressResultMap" parameterType="java.lang.String" >
+    select
+      a.id,
+      a.receiver,
+      a.city_id,
+      a.area_id,
+      a.user_id,
+      a.street,
+      a.full_address,
+      a.post_num,
+      a.phone,
+      a.is_default,
+      a.ts,
+      a.dr,
+      a.create_time,
+      c.id as city_id,
+      c.name as city_name,
+      a1.id as area_id,
+      a1.name as area_name
+    from pdk_bd_address a
+    left join pdk_bd_city_area c on a.city_id = c.id
+    left join pdk_bd_city_area a1 on a.city_id = a1.id
+    where a.dr = 0 and a.user_id = #{userId, jdbcType=VARCHAR}
+    order by a.create_time
+  </select>
+
+  <select id="selectLikeByUserId" resultMap="AddressResultMap" parameterType="java.lang.String" >
+    select DISTINCT * from (
+      select
+        a.id,
+        a.receiver,
+        a.city_id,
+        a.area_id,
+        a.user_id,
+        a.street,
+        a.full_address,
+        a.post_num,
+        a.phone,
+        a.is_default,
+        a.ts,
+        a.dr,
+        a.create_time,
+        c.name as city_name,
+        a1.name as area_name
+      from pdk_bd_address a
+      left join pdk_bd_city_area c on a.city_id = c.id
+      left join pdk_bd_city_area a1 on a.city_id = a1.id
+      where a.dr = 0 and a.user_id = #{userId, jdbcType=VARCHAR}
+        and a.receiver like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        a.id,
+        a.receiver,
+        a.city_id,
+        a.area_id,
+        a.user_id,
+        a.street,
+        a.full_address,
+        a.post_num,
+        a.phone,
+        a.is_default,
+        a.ts,
+        a.dr,
+        a.create_time,
+        c.name as city_name,
+        a1.name as area_name
+      from pdk_bd_address a
+      left join pdk_bd_city_area c on a.city_id = c.id
+      left join pdk_bd_city_area a1 on a.city_id = a1.id
+      where a.dr = 0 and a.user_id = #{userId, jdbcType=VARCHAR}
+        and a.full_address like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+    ) disT
+    ORDER BY disT.create_time
+  </select>
+
+  <select id="selectAllByUserId" resultMap="AddressResultMap" parameterType="java.lang.String" >
+    select
+    a.id,
+    a.receiver,
+    a.city_id,
+    a.area_id,
+    a.user_id,
+    a.street,
+    a.full_address,
+    a.post_num,
+    a.phone,
+    a.is_default,
+    a.ts,
+    a.dr,
+    a.create_time,
+    c.id as city_id,
+    c.name as city_name,
+    a1.id as area_id,
+    a1.name as area_name
+    from pdk_bd_address a
+    left join pdk_bd_city_area c on a.city_id = c.id
+    left join pdk_bd_city_area a1 on a.city_id = a1.id
+    where a.dr = 0 and a.user_id = #{userId, jdbcType=VARCHAR}
+    order by a.create_time
+  </select>
+
+  <update id="updateIsDefault" parameterType="java.lang.String" >
+    update pdk_bd_address set is_default = 'N'
+    where dr = 0
+      and user_id = #{userId, jdbcType=VARCHAR}
+      and id != #{id, jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectDefaultByUserId" resultMap="AddressResultMap" parameterType="java.lang.String" >
+    select
+    a.id,
+    a.receiver,
+    a.city_id,
+    a.area_id,
+    a.user_id,
+    a.street,
+    a.full_address,
+    a.post_num,
+    a.phone,
+    a.is_default,
+    a.ts,
+    a.dr,
+    a.create_time,
+    c.id as city_id,
+    c.name as city_name,
+    a1.id as area_id,
+    a1.name as area_name
+    from pdk_bd_address a
+    left join pdk_bd_city_area c on a.city_id = c.id
+    left join pdk_bd_city_area a1 on a.city_id = a1.id
+    where a.dr = 0 and a.is_default = 'Y' and a.user_id = #{userId, jdbcType=VARCHAR}
+    order by a.create_time
+  </select>
+
+</mapper>

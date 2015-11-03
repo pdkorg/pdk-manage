@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.sm.EmployeeReviewDao" >
+  <resultMap id="UserScoreResultMap" type="com.pdk.manage.model.sm.EmployeeReview" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <id column="user_id" property="userId" jdbcType="CHAR" />
+    <id column="source_id" property="sourceId" jdbcType="CHAR" />
+    <id column="employee_id" property="userId" jdbcType="CHAR" />
+    <id column="order_id" property="orderId" jdbcType="CHAR" />
+    <id column="score" property="score" jdbcType="INTEGER" />
+    <id column="description" property="description" jdbcType="VARCHAR" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+    <association property="user" javaType="com.pdk.manage.model.sm.User"
+                 resultMap="com.pdk.manage.dao.sm.UserDao.UserResultMap" columnPrefix="user_"/>
+
+  </resultMap>
+
+  <select id="selectByEmployeeId" parameterType="java.lang.String" resultMap="UserScoreResultMap" >
+    select
+    s.id,
+    s.user_id,
+    s.source_id,
+    s.employee_id,
+    s.order_id,
+    s.score,
+    s.description,
+    s.ts,
+    s.dr,
+    u.name as user_name
+    from pdk_sm_employee_review s
+    left join pdk_sm_user u on u.id = s.user_id
+    where s.dr = 0 and s.employee_id = #{employeeId, jdbcType=CHAR}
+  </select>
+  <select id="selectLikeByEmployeeId" parameterType="java.lang.String" resultMap="UserScoreResultMap" >
+    SELECT DISTINCT * FROM (
+      select
+        s.id,
+        s.user_id,
+        s.source_id,
+        s.employee_id,
+        s.order_id,
+        s.score,
+        s.description,
+        s.ts,
+        s.dr,
+        u.name as user_name
+      from pdk_sm_employee_review s
+      left join pdk_sm_user u on u.id = s.user_id
+      where s.dr = 0 and s.employee_id = #{employeeId, jdbcType=CHAR}
+        and s.description like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        s.id,
+        s.user_id,
+        s.source_id,
+        s.employee_id,
+        s.order_id,
+        s.score,
+        s.description,
+        s.ts,
+        s.dr,
+        u.name as user_name
+      from pdk_sm_employee_review s
+      left join pdk_sm_user u on u.id = s.user_id
+      where s.dr = 0 and s.employee_id = #{employeeId, jdbcType=CHAR}
+        and u.name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+    ) disT
+  </select>
+
+  <select id="selectReviewByOrder" parameterType="java.lang.String" resultMap="UserScoreResultMap" >
+    select
+      id,
+      user_id,
+      source_id,
+      employee_id,
+      order_id,
+      score,
+      description,
+      ts,
+      dr
+    from pdk_sm_employee_review
+    where dr = 0
+      and source_id = #{sourceId, jdbcType=CHAR}
+      and order_id = #{orderId, jdbcType=CHAR}
+  </select>
+</mapper>

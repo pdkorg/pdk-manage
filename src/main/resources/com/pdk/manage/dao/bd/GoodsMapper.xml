@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.bd.GoodsDao" >
+  <resultMap id="GoodsResultMap" type="com.pdk.manage.model.bd.Goods" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="goodstype_id" property="goodstypeId" jdbcType="CHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+    <association property="goodsType" javaType="com.pdk.manage.model.bd.GoodsType"
+                 resultMap="com.pdk.manage.dao.bd.GoodsTypeDao.BaseResultMap" columnPrefix="goodstype_"/>
+  </resultMap>
+
+  <select id="selectByCondition" parameterType="java.lang.String" resultMap="GoodsResultMap">
+    select
+    t.id,
+    t.code,
+    t.name,
+    t.goodstype_id,
+    t.status,
+    t.memo,
+    t.ts,
+    t.dr,
+    r.name as goodstype_name
+    from pdk_bd_goods t
+    left join pdk_bd_goodstype r on t.goodstype_id = r.id
+    where t.dr = 0
+    <if test="code != null and code !='' " >
+      and t.code like CONCAT('%',#{code,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="name != null and name != ''" >
+      and t.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+    </if>
+
+  </select>
+
+  <select id="mySelect" parameterType="java.lang.String" resultMap="GoodsResultMap">
+    select
+      t.id,
+      t.code,
+      t.name,
+      t.goodstype_id,
+      t.status,
+      t.memo,
+      t.ts,
+      t.dr,
+      r.name as goodstype_name
+    from pdk_bd_goods t
+    left join pdk_bd_goodstype r on t.goodstype_id = r.id
+    where t.dr = 0
+  </select>
+
+  <select id="mySelectLike" parameterType="java.lang.String" resultMap="GoodsResultMap">
+    select DISTINCT * from (
+      select
+        t.id,
+        t.code,
+        t.name,
+        t.goodstype_id,
+        t.status,
+        t.memo,
+        t.ts,
+        t.dr,
+        r.name as goodstype_name
+      from pdk_bd_goods t
+      left join pdk_bd_goodstype r on t.goodstype_id = r.id
+      where t.dr = 0
+        and t.code like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        t.id,
+        t.code,
+        t.name,
+        t.goodstype_id,
+        t.status,
+        t.memo,
+        t.ts,
+        t.dr,
+        r.name as goodstype_name
+      from pdk_bd_goods t
+      left join pdk_bd_goodstype r on t.goodstype_id = r.id
+      where t.dr = 0
+        and t.name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        t.id,
+        t.code,
+        t.name,
+        t.goodstype_id,
+        t.status,
+        t.memo,
+        t.ts,
+        t.dr,
+        r.name as goodstype_name
+      from pdk_bd_goods t
+      left join pdk_bd_goodstype r on t.goodstype_id = r.id
+      where t.dr = 0
+        and t.memo like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        t.id,
+        t.code,
+        t.name,
+        t.goodstype_id,
+        t.status,
+        t.memo,
+        t.ts,
+        t.dr,
+        r.name as goodstype_name
+      from pdk_bd_goods t
+      left join pdk_bd_goodstype r on t.goodstype_id = r.id
+      where t.dr = 0
+        and r.name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+    ) disT
+  </select>
+
+  <select id="getGoods" parameterType="java.lang.String" resultMap="GoodsResultMap">
+    select
+    t.id,
+    t.code,
+    t.name,
+    t.goodstype_id,
+    t.status,
+    t.memo,
+    t.ts,
+    t.dr,
+    r.name as goodstype_name
+    from pdk_bd_goods t
+    left join pdk_bd_goodstype r on t.goodstype_id = r.id
+    where t.id = #{id,jdbcType=VARCHAR} and t.dr = 0;
+  </select>
+</mapper>

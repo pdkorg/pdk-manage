@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.flow.FlowTemplateUnitDao" >
+  <resultMap id="FlowTemplateUnitResultMap" type="com.pdk.manage.model.flow.FlowTemplateUnit" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="template_id" property="templateId" jdbcType="CHAR" />
+    <result column="flow_type_id" property="flowTypeId" jdbcType="CHAR" />
+    <result column="flow_unit_id" property="flowUnitId" jdbcType="CHAR" />
+    <result column="role_id" property="roleId" jdbcType="CHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+    <result column="is_push_msg" property="isPushMsg" jdbcType="CHAR" />
+    <result column="msg_template" property="msgTemplate" jdbcType="VARCHAR" />
+    <result column="iq" property="iq" jdbcType="SMALLINT" />
+    <association property="role" javaType="com.pdk.manage.model.sm.Role"
+                 resultMap="com.pdk.manage.dao.sm.RoleDao.RoleResultMap" columnPrefix="role_"/>
+    <association property="flowUnit" javaType="com.pdk.manage.model.flow.FlowUnit"
+                 resultMap="com.pdk.manage.dao.flow.FlowUnitDao.FlowUnitResultMap" columnPrefix="flow_unit_"/>
+  </resultMap>
+
+  <select id="selectTemplateUnitByTemplate" parameterType="java.lang.String" resultMap="FlowTemplateUnitResultMap">
+    SELECT
+	u.id,
+	u.template_id,
+	u.flow_type_id,
+	u.flow_unit_id,
+	u.role_id,
+	u. STATUS,
+	u.memo,
+	u.ts,
+	u.dr,
+	u.is_push_msg,
+	u.msg_template,
+	u.iq,
+	r.code AS role_code,
+	r.name AS role_name,
+	r.status AS role_status,
+	r.memo AS role_memo,
+	r.ts AS role_ts,
+	r.dr AS role_dr,
+	f.code AS flow_unit_code,
+	f.name AS flow_unit_name,
+	f.status AS flow_unit_status,
+	f.memo AS flow_unit_memo,
+	f.ts AS flow_unit_ts,
+	f.dr AS flow_unit_dr,
+	f.order_status AS flow_unit_order_status,
+	f.flow_action_code AS flow_unit_flow_action_code
+    FROM
+        pdk_flow_template_unit u
+    LEFT JOIN pdk_sm_role r ON u.role_id = r.id
+    LEFT JOIN pdk_flow_flowunit f ON u.flow_unit_id = f.id
+    WHERE
+        u.dr = 0 AND r.dr = 0 AND f.dr = 0
+    AND u.template_id = #{id}
+    ORDER BY u.iq
+  </select>
+
+  <select id="queryMaxIq" parameterType="java.lang.String" resultType="java.lang.Short">
+    SELECT max(iq) FROM pdk_flow_template_unit WHERE dr = 0 and template_id = #{templateId}
+  </select>
+
+  <select id="queryFlowTemplateUnitByFlowTypes" resultType="int">
+    select count(id) from pdk_flow_template_unit where dr = 0 and flow_type_id in
+    <foreach collection="list" item="item" open="(" separator="," close=")">
+      #{item,}
+    </foreach>
+  </select>
+
+  <select id="queryFlowTemplateUnitByFlowUnits" resultType="int">
+    select count(id) from pdk_flow_template_unit where dr = 0 and flow_unit_id in
+    <foreach collection="list" item="item" open="(" separator="," close=")">
+      #{item,}
+    </foreach>
+  </select>
+  
+  <select id="queryTemplateUnitByRoles" resultMap="FlowTemplateUnitResultMap" parameterType="java.util.List">
+    SELECT id,template_id,flow_type_id,flow_unit_id,role_id FROM pdk_flow_template_unit
+    WHERE dr=0 AND role_id IN
+    <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+      #{item,jdbcType=VARCHAR}
+    </foreach>
+  </select>
+
+</mapper>
+

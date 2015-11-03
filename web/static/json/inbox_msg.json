@@ -1,0 +1,32 @@
+{
+	"messages":[
+		{
+			"img":"../../static/admin/pages/media/profile/avatar2.jpg",
+			"href":"inbox.html?a=view",
+			"from":"Lisa Wong",
+			"time":"Just Now",
+			"message":"Vivamus sed auctor nibh congue nibh. auctor nibh auctor nibh..."
+		},
+		{
+			"img":"../../static/admin/pages/media/profile/avatar3.jpg",
+			"href":"inbox.html?a=view",
+			"from":"Richard Doe",
+			"time":"16 mins",
+			"message":"Vivamus sed congue nibh auctor nibh congue nibh. auctor nibh auctor nibh..."
+		},
+		{
+			"img":"../../static/admin/pages/media/profile/avatar1.jpg",
+			"href":"inbox.html?a=view",
+			"from":"Bob Nilson",
+			"time":"2 hrs",
+			"message":"Vivamus sed nibh auctor nibh congue nibh. auctor nibh auctor nibh..."
+		},
+		{
+			"img":"../../static/admin/pages/media/profile/avatar2.jpg",
+			"href":"inbox.html?a=view",
+			"from":"Lisa Wong",
+			"time":"40 mins",
+			"message":"Vivamus sed auctor 40% nibh congue nibh..."
+		}
+	]
+}

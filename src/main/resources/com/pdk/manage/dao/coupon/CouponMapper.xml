@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.coupon.CouponDao" >
+  <resultMap id="CouponResultMap" type="com.pdk.manage.model.coupon.Coupon" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="template_id" property="templateId" jdbcType="CHAR" />
+    <result column="activity_id" property="activityId" jdbcType="CHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="flow_type_id" property="flowTypeId" jdbcType="CHAR" />
+    <result column="send_mny" property="sendMny" jdbcType="DECIMAL" />
+    <result column="min_pay_mny" property="minPayMny" jdbcType="DECIMAL" />
+    <result column="act_begin_date" property="actBeginDate" jdbcType="TIMESTAMP" />
+    <result column="act_end_date" property="actEndDate" jdbcType="TIMESTAMP" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+    <association property="flowType" javaType="com.pdk.manage.model.flow.FlowType"
+                 resultMap="com.pdk.manage.dao.flow.FlowTypeDao.FlowTypeResultMap" columnPrefix="flow_type_"/>
+  </resultMap>
+
+  <select id="getListByActivityId" parameterType="java.lang.String" resultMap="CouponResultMap" >
+    select
+    t.id,
+    t.template_id,
+    t.activity_id,
+    t.code,
+    t.name,
+    t.flow_type_id,
+    t.send_mny,
+    t.min_pay_mny,
+    t.act_begin_date,
+    t.act_end_date,
+    t.memo,
+    t.ts,
+    t.dr,
+    f.id as flow_type_id,
+    f.code as flow_type_code,
+    f.name as flow_type_name
+    from pdk_coupon t
+    left join pdk_flow_flowtype f on f.id = t.flow_type_id
+    where t.dr = 0 and t.activity_id = #{activityId, jdbcType=CHAR}
+  </select>
+
+  <update id="deleteCouponByActivityId" parameterType="java.lang.String" >
+    update pdk_coupon set dr = 1
+    where dr = 0
+    and activity_id in
+    <foreach item="item" index="index" collection="activityIds" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </update>
+
+  <select id="selectCouponByTemplateId" parameterType="java.lang.String" resultMap="CouponResultMap" >
+    select
+    t.id,
+    t.template_id,
+    t.activity_id,
+    t.code,
+    t.name,
+    t.flow_type_id,
+    t.send_mny,
+    t.min_pay_mny,
+    t.act_begin_date,
+    t.act_end_date,
+    t.memo,
+    t.ts,
+    t.dr,
+    f.id as flow_type_id,
+    f.code as flow_type_code,
+    f.name as flow_type_name
+    from pdk_coupon t
+    left join pdk_flow_flowtype f on f.id = t.flow_type_id
+    where t.dr = 0 and t.id in (
+      select tmp.coupon_id from pdk_coupon_activity_template_b tmp where tmp.dr = 0 and tmp.template_id = #{templateId, jdbcType=CHAR}
+    )
+  </select>
+
+  <select id="selectByIds" parameterType="java.lang.String" resultMap="CouponResultMap" >
+    select
+    t.id,
+    t.template_id,
+    t.activity_id,
+    t.code,
+    t.name,
+    t.flow_type_id,
+    t.send_mny,
+    t.min_pay_mny,
+    t.act_begin_date,
+    t.act_end_date,
+    t.memo,
+    t.ts,
+    t.dr,
+    f.id as flow_type_id,
+    f.code as flow_type_code,
+    f.name as flow_type_name
+    from pdk_coupon t
+    left join pdk_flow_flowtype f on f.id = t.flow_type_id
+    where
+    <if test="ids != null" >
+      t.id in
+      <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+
+  </select>
+</mapper>

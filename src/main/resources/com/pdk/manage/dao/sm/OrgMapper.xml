@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.sm.OrgDao" >
+  <resultMap id="OrgResultMap" type="com.pdk.manage.model.sm.Org" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="incode" property="incode" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="info" property="info" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="CHAR" />
+    <result column="sq" property="sq" jdbcType="SMALLINT" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+  </resultMap>
+
+  <select id="selectByIds" parameterType="java.lang.String" resultMap="OrgResultMap">
+    select id, code, name
+    from pdk_sm_org
+    where dr = 0
+    <if test="orgIds != null" >
+      and id in
+      <foreach item="item" index="index" collection="orgIds" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="selectEnableData" parameterType="java.lang.String" resultMap="OrgResultMap">
+    select id, code, name, incode, info, status, memo, parent_id, sq, ts, dr
+    from pdk_sm_org
+    where dr = 0 and status = 0
+    order by code asc
+  </select>
+
+  <select id="selectByInnerCode" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(id) from pdk_sm_org where dr=0 and incode = #{incode, jdbcType=VARCHAR}
+  </select>
+</mapper>

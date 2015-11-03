@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+		  http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>pdk-manage.root</param-value>
+    </context-param>
+    
+    
+    <context-param>
+        <param-name>resource_path</param-name>
+        <!--<param-value>http://localhost:8080</param-value>-->
+        <param-value>http://paodekuai.lifecreatech.com:8888</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>resource_token</param-name>
+        <param-value>56073d1caa3e14cd4313838ef0f39ec8</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>msg_server</param-name>
+        <param-value>http://zhenglizhe.lifecreatech.com/pdk-chat</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>chat_cs_websocket</param-name>
+        <param-value>ws://zhenglizhe.lifecreatech.com/pdk-chat/websocket/cs</param-value>
+    </context-param>
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <context-param>
+        <param-name>isLog4jAutoInitializationDisabled</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath*:spring.xml,classpath*:quartz.xml</param-value>
+    </context-param>
+
+    <servlet>
+        <servlet-name>spring_mvc</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath*:spring-mvc.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>spring_mvc</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <async-supported>true</async-supported>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>hiddenHttpMethodFilter</filter-name>
+        <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>hiddenHttpMethodFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <session-config>
+        <session-timeout>1440</session-timeout>
+    </session-config>
+
+</web-app>

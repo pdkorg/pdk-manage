@@ -1,0 +1,84 @@
+@CHARSET "UTF-8";
+
+body {
+	font-size: 14px;
+	font-family: "microsoft yahei", "微软雅黑", Arial, HELVETICA, serif;
+	margin: 0;
+	padding: 0;
+	-webkit-font-smoothing:antialiased;
+	-moz-osx-font-smoothing:antialiased;
+	background-color: #E9ECF3;
+}
+
+
+@media only screen and (max-width: 640px) {
+	.width-400 {
+		width: 98%;
+	}
+}
+
+@media only screen and (min-width: 641px) {
+	.width-400 {
+		width: 440px;
+	}
+}
+
+.input-group-addon{
+	background-color: #ffffff;
+}
+
+#validate-code-addon {
+	padding: 0 3px 0 3px;
+}
+
+#validate-code-addon img:hover {
+	cursor: pointer;
+}
+
+.footer {
+	margin-top: 45px;
+}
+
+.btn-login {
+	color: #fff;
+	background-color: #EE5A38;
+	border-color: #C25437;
+}
+
+.btn-login:hover, .btn-login:active{
+	color: #fff;
+	background-color: #FF4E2A;
+	border-color: #C25437;
+}
+
+.close {
+	display: inline-block;
+	margin-top: 0px;
+	margin-right: 0px;
+	width: 9px;
+	height: 9px;
+	background: url("../../global/img/remove-icon-small.png") no-repeat !important;
+	text-indent: -10000px;
+	outline: none;
+}
+
+.container {
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	background-color: #fff;
+	padding:30px;
+}
+
+.logo-title {
+	text-align: center;
+	margin-top: 60px;
+	margin-bottom: 30px;
+}
+
+.login-title {
+	margin-top: 0;
+	margin-bottom: 10px;
+	padding-bottom: 10px;
+	text-align: center;
+	color: #EE5A38;
+}

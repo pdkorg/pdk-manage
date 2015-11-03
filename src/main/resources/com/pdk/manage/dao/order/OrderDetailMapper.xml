@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pdk.manage.dao.order.OrderDetailMapper">
+  <resultMap id="BaseResultMap" type="com.pdk.manage.model.order.OrderDetail">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="order_id" jdbcType="CHAR" property="orderId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="num" jdbcType="DOUBLE" property="num" />
+    <result column="unit_id" jdbcType="CHAR" property="unitId" />
+    <result column="buy_adress" jdbcType="VARCHAR" property="buyAdress" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="goods_mny" jdbcType="DECIMAL" property="goodsMny"/>
+    <result column="service_mny" jdbcType="DECIMAL" property="serviceMny" />
+    <result column="oth_mny" jdbcType="DECIMAL" property="othMny" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="memo" jdbcType="VARCHAR" property="memo" />
+    <result column="ts" jdbcType="TIMESTAMP" property="ts" />
+    <result column="dr" jdbcType="SMALLINT" property="dr" />
+    <result column="img_url" jdbcType="VARCHAR" property="imgUrl" />
+    <result column="reserve_time" jdbcType="VARCHAR" property="reserveTime" />
+  </resultMap>
+
+  <select id="getGoodsByOrderId" resultMap="BaseResultMap" parameterType="java.lang.String">
+    SELECT id,order_id,name,num,unit_id,buy_adress,price,goods_mny,service_mny,oth_mny,status,memo,ts,dr,img_url,DATE_FORMAT(reserve_time,'%Y-%m-%d %k:%i')reserve_time
+    FROM pdk_order_orderdetail where dr=0 AND order_id = #{orderId}
+    ORDER BY name
+  </select>
+
+  <update id="deleteDetailsByOrderId" parameterType="java.lang.String">
+    UPDATE pdk_order_orderdetail SET dr=1,ts=now()
+    WHERE dr=0 AND order_id = #{orderId}
+  </update>
+
+  <update id="updateDetailList" parameterType="java.util.List">
+    UPDATE pdk_order_orderdetail set
+    name=
+    <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+      when #{item.id,jdbcType=VARCHAR} then #{item.name,jdbcType=VARCHAR}
+    </foreach>
+    ,num=
+    <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+      when #{item.id,jdbcType=VARCHAR} then #{item.num}
+    </foreach>
+    ,unit_id=
+    <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+      when #{item.id,jdbcType=VARCHAR} then #{item.unitId,jdbcType=VARCHAR}
+    </foreach>
+    ,buy_adress=
+    <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+      when #{item.id,jdbcType=VARCHAR} then #{item.buyAdress,jdbcType=VARCHAR}
+    </foreach>
+    ,price=
+    <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+      when #{item.id,jdbcType=VARCHAR} then #{item.price,jdbcType=DECIMAL}
+    </foreach>
+    ,goods_mny=
+    <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+      when #{item.id,jdbcType=VARCHAR} then #{item.goodsMny,jdbcType=DECIMAL}
+    </foreach>
+    ,service_mny=
+    <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+      when #{item.id,jdbcType=VARCHAR} then #{item.serviceMny,jdbcType=DECIMAL}
+    </foreach>
+    ,oth_mny=
+    <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+      when #{item.id,jdbcType=VARCHAR} then #{item.othMny,jdbcType=DECIMAL}
+    </foreach>
+    ,status=
+    <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+      when #{item.id,jdbcType=VARCHAR} then #{item.status,jdbcType=VARCHAR}
+    </foreach>
+    ,memo=
+    <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+      when #{item.id,jdbcType=VARCHAR} then #{item.memo,jdbcType=VARCHAR}
+    </foreach>
+    ,ts=
+    <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+      when #{item.id,jdbcType=VARCHAR} then #{item.ts,jdbcType=TIMESTAMP}
+    </foreach>
+    ,dr=
+    <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+      when #{item.id,jdbcType=VARCHAR} then #{item.dr,jdbcType=SMALLINT}
+    </foreach>
+    ,img_url =
+    <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+      when #{item.id,jdbcType=VARCHAR} then #{item.imgUrl,jdbcType=VARCHAR}
+    </foreach>
+    ,reserve_time =
+    <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+      when #{item.id,jdbcType=VARCHAR} then #{item.reserveTime,jdbcType=TIMESTAMP}
+    </foreach>
+    where id in
+    <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+      #{item.id,jdbcType=VARCHAR}
+    </foreach>
+  </update>
+
+  <select id="getOrderDetailByOrderIds" parameterType="java.util.List" resultMap="BaseResultMap">
+    SELECT id,order_id,name,num,unit_id,buy_adress,price,goods_mny,service_mny,oth_mny,status,memo,ts,dr,img_url,DATE_FORMAT(reserve_time,'%Y-%m-%d %k:%i')reserve_time
+    FROM pdk_order_orderdetail where dr=0
+    AND order_id IN
+    <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+      #{item,jdbcType=VARCHAR}
+    </foreach>
+  </select>
+
+</mapper>

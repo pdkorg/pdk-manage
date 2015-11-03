@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.coupon.CouponActivityDao" >
+  <resultMap id="ActivityResultMap" type="com.pdk.manage.model.coupon.CouponActivity" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="auto_send_time" property="autoSendTime" jdbcType="TIMESTAMP" />
+    <result column="send_user_cnt" property="sendUserCnt" jdbcType="INTEGER" />
+    <result column="send_total_mny" property="sendTotalMny" jdbcType="DECIMAL" />
+    <result column="send_message" property="sendMessage" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+  </resultMap>
+
+  <select id="selectEnable" parameterType="java.lang.String" resultMap="ActivityResultMap" >
+    select
+      id,
+      code,
+      name,
+      auto_send_time,
+      send_user_cnt,
+      send_total_mny,
+      send_message,
+      status,
+      memo,
+      ts,
+      dr
+    from pdk_coupon_activity
+    where dr = 0 and status = 0
+  </select>
+
+  <select id="selectLikeEnable" parameterType="java.lang.String" resultMap="ActivityResultMap" >
+    select DISTINCT * from (
+      select
+        id,
+        code,
+        name,
+        auto_send_time,
+        send_user_cnt,
+        send_total_mny,
+        send_message,
+        status,
+        memo,
+        ts,
+        dr
+      from pdk_coupon_activity
+      where dr = 0 and status = 0
+        and code like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        id,
+        code,
+        name,
+        auto_send_time,
+        send_user_cnt,
+        send_total_mny,
+        send_message,
+        status,
+        memo,
+        ts,
+        dr
+      from pdk_coupon_activity
+      where dr = 0 and status = 0
+        and name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        id,
+        code,
+        name,
+        auto_send_time,
+        send_user_cnt,
+        send_total_mny,
+        send_message,
+        status,
+        memo,
+        ts,
+        dr
+      from pdk_coupon_activity
+      where dr = 0 and status = 0
+        and send_message like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        id,
+        code,
+        name,
+        auto_send_time,
+        send_user_cnt,
+        send_total_mny,
+        send_message,
+        status,
+        memo,
+        ts,
+        dr
+      from pdk_coupon_activity
+      where dr = 0 and status = 0
+        and memo like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+    ) disT
+  </select>
+
+  <select id="findAutoSendActivity" parameterType="java.lang.String" resultMap="ActivityResultMap" >
+    select
+    id,
+    code,
+    name,
+    auto_send_time,
+    send_user_cnt,
+    send_total_mny,
+    send_message,
+    status,
+    memo,
+    ts,
+    dr
+    from pdk_coupon_activity
+    where dr = 0 and status = 1
+    <if test="sendDate != null">
+      <![CDATA[   and auto_send_time <=  #{sendDate,jdbcType=DATE}   ]]>
+    </if>
+  </select>
+
+</mapper>

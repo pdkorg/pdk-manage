@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.app.AppInfoMapper">
+    <resultMap id="OrderInfoResponseModel" type="com.pdk.manage.model.app.response.OrderInfoResponseModel">
+        <result column="orderid" property="orderid" jdbcType="VARCHAR"/>
+        <result column="ordercode" property="ordercode" jdbcType="VARCHAR"/>
+        <result column="flow_instance_id" property="instanceid" jdbcType="VARCHAR"/>
+        <result column="orderTypeName" property="busTypeName" jdbcType="VARCHAR"/>
+        <result column="orderTypeCode" property="busTypeCode" jdbcType="VARCHAR"/>
+        <result column="adress" property="cusaddress" jdbcType="VARCHAR"/>
+        <result column="start_time" property="ordertime" jdbcType="VARCHAR"/>
+        <result column="reserve_time" property="orderPreTime" jdbcType="VARCHAR"/>
+        <result column="memo" property="ordernotes" jdbcType="VARCHAR"/>
+        <result column="delivery_status" property="orderState" jdbcType="VARCHAR"/>
+        <result column="is_flow_finish" property="isFinished" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="mny" property="orderamount" jdbcType="VARCHAR"/>
+        <result column="pay_type" property="ipaytype" jdbcType="VARCHAR"/>
+        <result column="cusname" property="cusname" jdbcType="VARCHAR"/>
+        <result column="custell" property="custell" jdbcType="VARCHAR"/>
+        <result column="custell" property="custell" jdbcType="VARCHAR"/>
+        <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+        <result column="flow_action" property="flowAction" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="OrderGoodsModel" type="com.pdk.manage.model.app.response.OrderGoodsModel">
+        <result column="pruductName" property="goodsname" jdbcType="VARCHAR"/>
+        <result column="goodsNum" property="goodsnum" jdbcType="VARCHAR" javaType="double"/>
+        <result column="totalPrice" property="totalprice" jdbcType="VARCHAR" javaType="double"/>
+        <result column="remark" property="goodsnote" jdbcType="VARCHAR"/>
+        <result column="location" property="buyaddress" jdbcType="VARCHAR"/>
+        <result column="goodsunit" property="unit" jdbcType="VARCHAR"/>
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="ReportSumInfoModel" type="com.pdk.manage.model.app.response.ReportSumInfoModel">
+        <result column="totalmny" property="totalmny" javaType="java.math.BigDecimal" />
+        <result column="pay_type" property="paytype" javaType="java.lang.Short" />
+        <result column="tipmny" property="tipmny" javaType="java.math.BigDecimal" />
+    </resultMap>
+
+    <select id="getorderInfoList" resultMap="OrderInfoResponseModel" parameterType="com.pdk.manage.model.app.request.OrderListRequestModel">
+        SELECT a.id orderid,a.code ordercode,ft.code orderTypeCode,ft.name orderTypeName,a.adress,DATE_FORMAT(a.start_time,'%Y-%m-%d %k:%i') start_time,DATE_FORMAT(a.reserve_time,'%Y-%m-%d %k:%i') reserve_time,
+        a.memo,a.delivery_status,a.status,a.mny,a.pay_type,user.real_name cusname,user.phone custell,a.is_flow_finish
+        FROM pdk_order_order AS a
+        LEFT JOIN pdk_flow_flowtype AS ft ON a.flowtype_id = ft.id
+        LEFT JOIN pdk_sm_user AS user on a.user_id = user.id
+        where a.dr = 0
+        <if test="userid!=null">
+            AND a.ywy_id=#{userid,jdbcType=VARCHAR}
+        </if>
+
+        <if test="andor==0">
+            AND ( a.status != '4' AND  a.is_flow_finish!='1')
+            ORDER BY a.start_time DESC
+        </if>
+        <if test="andor==1">
+            AND (a.status = '4' or  a.is_flow_finish='1')
+            ORDER BY a.start_time DESC
+        </if>
+
+        <if test="currentpage!=null and pagesize!=null">
+            LIMIT #{currentpage},#{pagesize};
+        </if>
+
+    </select>
+
+    <select id="queryFinishedNum" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(a.id) from pdk_order_order a
+        LEFT join  pdk_flow_template_instanceunit b on a.flow_instance_id = b.template_instance_id
+        RIGHT JOIN (select * from pdk_flow_flowunit where flow_action_code='3') c ON b.flow_unit_id=c.id
+        where Date(b.finish_time)=CURRENT_DATE and a.ywy_id= #{userId}
+        and a.dr=0 and a.is_flow_finish='1'
+    </select>
+    <select id="getOrderDetailById" resultMap="OrderInfoResponseModel" parameterType="java.lang.String">
+        SELECT a.id orderid,a.code ordercode,ft.code orderTypeCode,ft.name orderTypeName,a.adress,DATE_FORMAT(a.start_time,'%Y-%m-%d %k:%i') start_time,DATE_FORMAT(a.reserve_time,'%Y-%m-%d %k:%i') reserve_time,
+        a.memo,a.delivery_status,a.status,a.mny,a.pay_type,user.real_name cusname,user.phone custell,a.is_flow_finish,a.flow_instance_id,a.ts,a.flow_action
+        FROM pdk_order_order AS a
+        LEFT JOIN pdk_flow_flowtype AS ft ON a.flowtype_id = ft.id
+        LEFT JOIN pdk_sm_user AS user on a.user_id = user.id
+        where a.dr = 0 AND a.id=#{orderid,jdbcType=VARCHAR}
+    </select>
+
+
+    <select id="querySumDataByDate" parameterType="com.pdk.manage.model.app.request.ReportRequestModel" resultMap="ReportSumInfoModel">
+        SELECT sum(a.mny) totalmny,sum(a.fee_mny) tipmny ,a.pay_type pay_type from pdk_order_order a
+        LEFT join  pdk_flow_template_instanceunit b on a.flow_instance_id = b.template_instance_id
+        RIGHT JOIN (select * from pdk_flow_flowunit where flow_action_code='3') c ON b.flow_unit_id=c.id
+        where a.dr=0 AND a.ywy_id=#{userid} and a.is_flow_finish=1
+        AND DATE(b.finish_time) <![CDATA[>=]]> #{startDate}
+        AND DATE(b.finish_time) <![CDATA[<=]]> #{endDate}
+        GROUP BY a.pay_type
+    </select>
+
+    <select id="queryOrderListByDate" resultMap="OrderInfoResponseModel" parameterType="com.pdk.manage.model.app.request.ReportRequestModel">
+        SELECT a.id orderid,a.code ordercode,a.adress adress,a.pay_type pay_type,a.mny mny,
+        flowtype.code orderTypeCode,flowtype.name orderTypeName
+        from pdk_order_order AS a
+        LEFT JOIN pdk_flow_flowtype AS flowtype on a.flowtype_id = flowtype.id
+        LEFT JOIN  pdk_flow_template_instanceunit b on a.flow_instance_id = b.template_instance_id
+        RIGHT JOIN (select * from pdk_flow_flowunit where flow_action_code='3') c ON b.flow_unit_id=c.id
+        where a.dr=0 AND a.ywy_id=#{userid} and a.is_flow_finish=1
+        AND DATE(b.finish_time) <![CDATA[>=]]> #{startDate}
+        AND DATE(b.finish_time) <![CDATA[<=]]> #{endDate}
+    </select>
+</mapper>

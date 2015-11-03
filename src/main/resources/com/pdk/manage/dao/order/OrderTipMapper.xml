@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.order.OrderTipMapper" >
+  <resultMap id="OrderTipResultMap" type="com.pdk.manage.model.order.OrderTip" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="user_id" property="userId" jdbcType="CHAR" />
+    <result column="source_id" property="sourceId" jdbcType="VARCHAR" />
+    <result column="employee_id" property="employeeId" jdbcType="CHAR" />
+    <result column="order_id" property="orderId" jdbcType="CHAR" />
+    <result column="mny" property="mny" jdbcType="DECIMAL" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+  </resultMap>
+  
+  <select id="selectByEmployeeId" parameterType="java.lang.String" resultMap="OrderTipResultMap" >
+    SELECT
+      id,
+      user_id,
+      source_id,
+      employee_id,
+      order_id,
+      mny,
+      ts,
+      dr
+    FROM pdk_order_tip
+    WHERE dr = 0 AND employee_id = #{employeeId,jdbcType=VARCHAR}
+  </select>
+</mapper>

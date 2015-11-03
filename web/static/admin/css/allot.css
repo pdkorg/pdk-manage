@@ -1,0 +1,30 @@
+.list-body{ margin-bottom: 20px;}
+.portlet.light .portlet-title .list-num{font-size: 14px; color: #5b9bd1;}
+.portlet.light  .portlet-title{min-height: 30px;}
+.portlet.light .list-nr{font-size: 14px; color: #666; padding: 5px 0; margin:0px;}
+.portlet.light .list-nr .list-zt{color: #f3565d; font-weight: bold;}
+.portlet.light .list-nr .type{font-family: "microsoft yahei","微软雅黑","Open Sans",sans-serif;}
+.portlet.light .list-nr .list-toggle{font-weight: bold; color: #5b9bd1; cursor: pointer;}
+.portlet.light .line{width: 100%; height: 1px; background-color: #ddd;margin-top: 8px;}
+.portlet.light .list-nr .list-detail {
+	border-width: 1px;
+	border-color: #E1E1E1;
+	border-collapse: collapse;
+	font-size: 14px;
+	display: none;
+	margin-top: 10px;
+}
+.portlet.light .list-nr .list-detail th {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #E1E1E1;
+	background-color: #E9ECF3;
+}
+.portlet.light .list-nr .list-detail td {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #E1E1E1;
+	background-color: #ffffff;
+}

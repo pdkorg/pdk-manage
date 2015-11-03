@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.coupon.CouponActivityRuleDao" >
+  <resultMap id="CouponResultMap" type="com.pdk.manage.model.coupon.CouponActivityRule" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <id column="activity_id" property="activityId" jdbcType="CHAR" />
+    <result column="connect_type" property="connectType" jdbcType="VARCHAR" />
+    <result column="rule_type" property="ruleType" jdbcType="VARCHAR" />
+    <result column="opt_type" property="optType" jdbcType="CHAR" />
+    <result column="chk_val" property="chkVal" jdbcType="DECIMAL" />
+    <result column="parent_id" property="parentId" jdbcType="DECIMAL" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+  </resultMap>
+
+  <select id="getListByActivityId" parameterType="java.lang.String" resultMap="CouponResultMap" >
+    select
+    id,
+    activity_id,
+    connect_type,
+    rule_type,
+    opt_type,
+    chk_val,
+    parent_id,
+    ts,
+    dr
+    from pdk_coupon_activity_rule
+    where dr = 0 and activity_id = #{activityId, jdbcType=CHAR}
+  </select>
+
+  <update id="deleteCouponActivityRuleByActivityId" parameterType="java.lang.String" >
+    update pdk_coupon_activity_rule set dr = 1
+    where dr = 0
+    and activity_id in
+    <foreach item="item" index="index" collection="activityIds" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </update>
+</mapper>

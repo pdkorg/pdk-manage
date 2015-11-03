@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.coupon.CouponUserSendedDao" >
+  <resultMap id="CouponUserSendResultMap" type="com.pdk.manage.model.coupon.CouponUserSended" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="activity_id" property="activityId" jdbcType="CHAR" />
+    <result column="user_id" property="userId" jdbcType="CHAR" />
+    <result column="source_id" property="sourceId" jdbcType="CHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="real_name" property="realName" jdbcType="VARCHAR" />
+    <result column="times" property="times" jdbcType="INTEGER" />
+    <result column="pay_mny" property="payMny" jdbcType="DECIMAL" />
+    <result column="register_date" property="registerDate" jdbcType="TIMESTAMP" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+  </resultMap>
+
+  <select id="selectByActivityId" resultMap="CouponUserSendResultMap" parameterType="java.lang.String">
+    select
+    id,
+    activity_id,
+    user_id,
+    source_id,
+    name,
+    real_name,
+    times,
+    pay_mny as pay_mny,
+    register_date as register_date,
+    ts,
+    dr
+
+    from pdk_coupon_user_sended
+    where dr=0
+    and activity_id = #{activityId, jdbcType=CHAR}
+  </select>
+
+  <select id="selectLikeByActivityId" resultMap="CouponUserSendResultMap" parameterType="java.lang.String">
+    SELECT DISTINCT * FROM (
+      select
+        id,
+        activity_id,
+        user_id,
+        source_id,
+        name,
+        real_name,
+        times,
+        pay_mny as pay_mny,
+        register_date as register_date,
+        ts,
+        dr
+      from pdk_coupon_user_sended
+      where dr=0
+      and activity_id = #{activityId, jdbcType=CHAR}
+        and name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        id,
+        activity_id,
+        user_id,
+        source_id,
+        name,
+        real_name,
+        times,
+        pay_mny as pay_mny,
+        register_date as register_date,
+        ts,
+        dr
+      from pdk_coupon_user_sended
+      where dr=0
+      and activity_id = #{activityId, jdbcType=CHAR}
+        and real_name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+    ) disT
+  </select>
+
+  <select id="getUserList4CouponSend" resultMap="CouponUserSendResultMap" parameterType="com.pdk.manage.model.coupon.CouponUserSended">
+    SELECT
+        u.id AS user_id,
+        u.source_id AS source_id,
+        u.name AS name,
+        u.real_name AS real_name,
+        u.register_time AS register_date
+      FROM pdk_sm_user u
+      WHERE u.status = 0
+      <if test="sqlWhere != null and sqlWhere !='' " >
+        ${sqlWhere}
+      </if>
+  </select>
+
+  <select id="getUserList4CouponSendByOrder" resultMap="CouponUserSendResultMap" parameterType="com.pdk.manage.model.coupon.CouponUserSended">
+    SELECT
+    u.id AS user_id,
+    u.source_id AS source_id,
+    u.name AS name,
+    u.real_name AS real_name,
+    u.register_time AS register_date
+    FROM pdk_sm_user u
+    INNER JOIN pdk_order_order a ON u.id = a.user_id
+    AND a.status != 4
+    AND a.pay_status = 1
+    AND a.dr = 0
+    WHERE u.status = 0
+    <if test="sqlWhere != null and sqlWhere !='' " >
+      ${sqlWhere}
+    </if>
+    GROUP BY u.id
+    HAVING 1=1
+    <if test="sqlHaving != null and sqlHaving !='' " >
+      ${sqlHaving}
+    </if>
+  </select>
+
+  <select id="getUserListLike4CouponSend" resultMap="CouponUserSendResultMap" parameterType="com.pdk.manage.model.coupon.CouponUserSended">
+    SELECT DISTINCT * FROM (
+      SELECT
+        u.id AS user_id,
+        u.source_id AS source_id,
+        u.name AS name,
+        u.real_name AS real_name,
+        u.register_time AS register_date
+      FROM pdk_sm_user u
+      WHERE u.status = 0
+      ${sqlWhere}
+      and u.name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      SELECT
+        u.id AS user_id,
+        u.source_id AS source_id,
+        u.name AS name,
+        u.real_name AS real_name,
+        u.register_time AS register_date
+      FROM pdk_sm_user u
+      WHERE u.status = 0
+      ${sqlWhere}
+      and u.real_name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+    ) disT
+  </select>
+
+  <select id="getUserListLike4CouponSendByOrder" resultMap="CouponUserSendResultMap" parameterType="com.pdk.manage.model.coupon.CouponUserSended">
+    SELECT DISTINCT * FROM (
+      SELECT
+        u.id AS user_id,
+        u.source_id AS source_id,
+        u.name AS name,
+        u.real_name AS real_name,
+        u.register_time AS register_date
+      FROM pdk_sm_user u
+      INNER JOIN pdk_order_order a ON u.id = a.user_id
+      AND a.status != 4
+      AND a.pay_status = 1
+      AND a.dr = 0
+      WHERE u.status = 0
+        ${sqlWhere}
+        and u.name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+      GROUP BY u.id
+      HAVING ${sqlHaving}
+
+      UNION ALL
+
+      SELECT
+        u.id AS user_id,
+        u.source_id AS source_id,
+        u.name AS name,
+        u.real_name AS real_name,
+        u.register_time AS register_date
+      FROM pdk_sm_user u
+      INNER JOIN pdk_order_order a ON u.id = a.user_id
+      AND a.status != 4
+      AND a.pay_status = 1
+      AND a.dr = 0
+      WHERE u.status = 0
+        ${sqlWhere}
+        and u.real_name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+      GROUP BY u.id
+      HAVING ${sqlHaving}
+    ) t
+  </select>
+
+  <select id="getSendUserCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+    SELECT
+      count(1)
+    FROM pdk_sm_user u
+    WHERE u.dr = 0 and u.status = 0
+    <if test="sqlWhere != null and sqlWhere !='' " >
+      ${sqlWhere}
+    </if>
+  </select>
+  <select id="getSendUserCountWithOrder" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(*) from (
+      SELECT
+        u.id
+      FROM pdk_sm_user u
+      INNER JOIN pdk_order_order a ON u.id = a.user_id
+      AND a.status != 4
+      AND a.pay_status = 1
+      AND a.dr = 0
+      WHERE u.status = 0
+      <if test="sqlWhere != null and sqlWhere !='' " >
+        ${sqlWhere}
+      </if>
+      GROUP BY u.id
+      HAVING 1=1
+      <if test="sqlHaving != null and sqlHaving !='' " >
+        ${sqlHaving}
+      </if>
+    ) t
+  </select>
+</mapper>

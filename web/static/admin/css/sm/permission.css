@@ -1,0 +1,23 @@
+.ms-container {
+	width: 100%;
+}
+
+.ms-container .ms-selectable li.ms-elem-selectable,.ms-container .ms-selection li.ms-elem-selection {
+	padding-left: 40px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-bottom: none;
+}
+
+.ms-container .ms-optgroup-label {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.ms-container .ms-list {
+	height: 500px;
+}
+
+#func-select {
+	margin-bottom: 10px;
+}

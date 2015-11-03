@@ -1,0 +1,80 @@
+body {
+	font-family: "microsoft yahei", "微软雅黑", "Open Sans", sans-serif;
+	font-size: 14px;
+}
+
+textarea{
+	max-width: 100%;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-family: "microsoft yahei", "微软雅黑", "Open Sans", sans-serif;
+}
+
+.dropdown-menu {
+	font-family: "microsoft yahei", "微软雅黑", "Open Sans", sans-serif;
+}
+
+.inbox {
+	font-weight: 600;
+}
+
+.form-section {
+	font: 16px 'microsoft yahei', 微软雅黑, 'Open Sans', sans-serif;
+}
+
+.form-control[readonly] {
+	background-color: #fff;
+}
+
+.form .form-section {
+	border-bottom-color: #dddddd;
+}
+
+.portlet.light.bordered > .portlet-title {
+	border-bottom-color: #dddddd;
+}
+
+.select2-container .select2-choice .select2-arrow {
+	border-left: none;
+}
+
+.table-op {
+	width: 100px;
+}
+
+.input-tabel{
+	height: 24px;
+}
+
+.table-inner {
+	margin-bottom: 0;
+}
+
+.inner-row {
+	margin:0;
+}
+
+.inner-table-header {
+	width:100px;
+	text-align: right;
+}
+.panel-title, .list-group-item-heading {
+	font-family: "microsoft yahei", "微软雅黑", "Open Sans", sans-serif;
+	font-size: 16px;
+	font-weight: 500;
+}
+
+.tile-body {
+	font-family: "microsoft yahei", "微软雅黑", "Open Sans", sans-serif;
+}
+
+@media (min-width: 992px) {
+    .padding-left-0 {
+        padding-left: 0;
+    }
+}
+
+ .page-header.navbar .page-logo .logo-default {
+    margin: 18px 10px 0 10px; 
+}

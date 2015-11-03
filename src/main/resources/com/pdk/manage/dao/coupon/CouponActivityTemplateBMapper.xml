@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.coupon.CouponActivityTemplateBDao" >
+  <resultMap id="CouponTemplateBResultMap" type="com.pdk.manage.model.coupon.CouponActivityTemplateB" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="template_id" property="templateId" jdbcType="CHAR" />
+    <result column="coupon_id" property="couponId" jdbcType="CHAR" />
+    <result column="flow_type_id" property="flowTypeId" jdbcType="CHAR" />
+    <result column="send_mny" property="sendMny" jdbcType="DECIMAL" />
+    <result column="min_pay_mny" property="minPayMny" jdbcType="DECIMAL" />
+    <result column="delay_days" property="delayDays" jdbcType="INTEGER" />
+    <result column="act_days" property="actDays" jdbcType="INTEGER" />
+    <result column="begin_date" property="beginDate" jdbcType="TIMESTAMP" />
+    <result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+  </resultMap>
+
+  <select id="selectTemplateByActCode" parameterType="java.lang.String" resultMap="CouponTemplateBResultMap" >
+    select
+    b.id,
+    b.template_id,
+    b.coupon_id,
+    b.code,
+    b.name,
+    b.flow_type_id,
+    b.send_mny,
+    b.min_pay_mny,
+    b.delay_days,
+    b.act_days,
+    b.begin_date,
+    b.end_date,
+    b.memo,
+    b.ts,
+    b.dr
+    from pdk_coupon_activity_template_b b
+    inner join pdk_coupon_activity_template t on t.id = b.template_id and t.dr = 0 and t.status = 0
+    where b.dr = 0 and t.code = #{actCode, jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectListByTemplateId" parameterType="java.lang.String" resultMap="CouponTemplateBResultMap" >
+    select
+    id,
+    template_id,
+    coupon_id,
+    code,
+    name,
+    flow_type_id,
+    send_mny,
+    min_pay_mny,
+    delay_days,
+    act_days,
+    begin_date,
+    end_date,
+    memo,
+    ts,
+    dr
+    from pdk_coupon_activity_template_b
+    where dr = 0 and template_id = #{templateId, jdbcType=CHAR}
+  </select>
+
+  <update id="deleteCouponByTemplateId" parameterType="java.lang.String" >
+    update pdk_coupon_activity_template_b set dr = 1
+    where dr = 0
+    and template_id in
+    <foreach item="item" index="index" collection="templateIds" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </update>
+</mapper>

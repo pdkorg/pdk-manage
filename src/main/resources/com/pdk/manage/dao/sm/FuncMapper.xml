@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.sm.FuncDao" >
+  <resultMap id="BaseResultMap" type="com.pdk.manage.model.sm.Func" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="incode" property="incode" jdbcType="VARCHAR" />
+    <result column="href" property="href" jdbcType="VARCHAR" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="CHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+    <result column="sq" property="sq" jdbcType="SMALLINT" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from pdk_sm_func
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.pdk.manage.model.sm.Func" >
+    insert into pdk_sm_func (id, code, name, 
+      incode, href, icon, 
+      parent_id, status, ts, 
+      dr, sq)
+    values (#{id,jdbcType=CHAR}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{incode,jdbcType=VARCHAR}, #{href,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=CHAR}, #{status,jdbcType=SMALLINT}, #{ts,jdbcType=TIMESTAMP}, 
+      #{dr,jdbcType=SMALLINT}, #{sq,jdbcType=SMALLINT})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.pdk.manage.model.sm.Func" >
+    update pdk_sm_func
+    set code = #{code,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      incode = #{incode,jdbcType=VARCHAR},
+      href = #{href,jdbcType=VARCHAR},
+      icon = #{icon,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=CHAR},
+      status = #{status,jdbcType=SMALLINT},
+      ts = #{ts,jdbcType=TIMESTAMP},
+      dr = #{dr,jdbcType=SMALLINT},
+      sq = #{sq,jdbcType=SMALLINT}
+    where id = #{id,jdbcType=CHAR}
+    order by incode
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select id, code, name, incode, href, icon, parent_id, status, ts, dr, sq
+    from pdk_sm_func
+    where id = #{id,jdbcType=CHAR}
+    order by incode
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, code, name, incode, href, icon, parent_id, status, ts, dr, sq
+    from pdk_sm_func order by incode
+  </select>
+
+  <select id="selectPermissionFunc" resultMap="BaseResultMap" >
+    select id, code, name, incode, href, icon, parent_id, status, ts, dr, sq
+    from pdk_sm_func
+    where id in (
+        select func_id from pdk_sm_permission_func where dr = 0
+          and role_id in
+          <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+            #{item}
+          </foreach>
+      )
+    or code in
+    <foreach item="item" index="index" collection="folderFunc" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    order by incode
+  </select>
+</mapper>

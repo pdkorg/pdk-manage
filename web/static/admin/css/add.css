@@ -1,0 +1,9 @@
+.list-body{border: 1px solid #ddd; padding: 10px;position: relative; margin: 0 0 10px 0; border-radius: 4px;height: auto}
+.list-body .list_row{margin-bottom: 10px;}
+.list-close{position: absolute;right: 0px;bottom: 0px;width: 25px; height:25px;background-color: #E9ECF3;}
+.list-close .close{width: 25px; height: 25px;background-position: center;}
+.list-bt{text-align: right;}
+.thumbnail a > img, .thumbnail > img{
+    display: inline-block;
+    margin-top: -13px;
+}

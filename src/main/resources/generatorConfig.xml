@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <!-- 数据库驱动-->
+    <context id="pdk_tables" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+
+        <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+            <property name="mappers" value="tk.mybatis.mapper.common.Mapper"/>
+        </plugin>
+
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <!--数据库链接URL，用户名、密码 -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://123.57.147.159:3306/pdk_dev" userId="root" password="Zhenglizhe2015">
+        </jdbcConnection>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+        <!-- 生成模型的包名和位置-->
+        <javaModelGenerator targetPackage="com.pdk.manage.model" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+        <!-- 生成映射文件的包名和位置-->
+        <sqlMapGenerator targetPackage="com.pdk.manage.dao" targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+        <!-- 生成DAO的包名和位置-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.pdk.manage.dao" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+        <!-- 要生成哪些表-->
+        <!-- 已经生成了的数据库表
+        <table tableName="pdk_sm_employee" domainObjectName="sm.Employee" />
+        <table tableName="pdk_sm_func" domainObjectName="sm.Func" />
+        <table tableName="pdk_sm_funcassign" domainObjectName="sm.FuncAssign" />
+        <table tableName="pdk_sm_file" domainObjectName="sm.File" />
+        <table tableName="pdk_sm_user" domainObjectName="sm.User" />
+        <table tableName="pdk_sm_org" domainObjectName="sm.Org" />
+        <table tableName="pdk_sm_role" domainObjectName="sm.Role" />
+
+        <table tableName="pdk_bd_unit" domainObjectName="bd.Unit" />
+        <table tableName="pdk_bd_goods" domainObjectName="bd.Goods" />
+        <table tableName="pdk_bd_goodstype" domainObjectName="bd.GoodsType" />
+        <table tableName="pdk_bd_shop" domainObjectName="bd.Shop" />
+
+        <table tableName="pdk_flow_flowtype" domainObjectName="flow.FlowType" />
+        <table tableName="pdk_flow_flowunit" domainObjectName="flow.FlowUnit" />
+        <table tableName="pdk_flow_template" domainObjectName="flow.FlowTemplate" />
+
+        <table tableName="pdk_order_order" domainObjectName="order.Order" />
+        <table tableName="pdk_order_orderdetail" domainObjectName="order.OrderDetail" />
+        <table tableName="pdk_flow_template_instance" domainObjectName="flow.FlowTemplateInstance" />
+        -->
+
+        <table tableName="pdk_flow_template_instanceunit" domainObjectName="flow.FlowTemplateInstanceUnit" />
+
+    </context>
+</generatorConfiguration>
+
+        <!-- 运行 mvn mybatis-generator:generate -->

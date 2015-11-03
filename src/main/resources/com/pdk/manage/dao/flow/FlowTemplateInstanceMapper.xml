@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.flow.FlowTemplateInstanceDao">
+    <resultMap id="FlowTemplateInstanceResultMap" type="com.pdk.manage.model.flow.FlowTemplateInstance">
+        <id column="id" property="id" jdbcType="CHAR"/>
+        <result column="flow_type_id" property="flowTypeId" jdbcType="CHAR"/>
+        <result column="template_id" property="templateId" jdbcType="CHAR"/>
+        <result column="status" property="status" jdbcType="SMALLINT"/>
+        <result column="memo" property="memo" jdbcType="VARCHAR"/>
+        <result column="ts" property="ts" jdbcType="TIMESTAMP"/>
+        <result column="dr" property="dr" jdbcType="SMALLINT"/>
+        <collection property="flowTemplateInstanceUnitList" ofType="com.pdk.manage.model.flow.FlowTemplateInstanceUnit"
+                    column="id"
+                    select="com.pdk.manage.dao.flow.FlowTemplateInstanceUnitDao.getFlowTemplateInstanceUnitList"/>
+    </resultMap>
+
+    <select id="queryFlowTemplateInstances" resultMap="FlowTemplateInstanceResultMap" parameterType="java.lang.String">
+        select id, flow_type_id, template_id, status, memo, ts, dr from pdk_flow_template_instance where dr = 0 and id in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item,}
+        </foreach>
+    </select>
+
+</mapper>

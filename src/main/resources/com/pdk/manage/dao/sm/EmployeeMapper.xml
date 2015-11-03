@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.sm.EmployeeDao">
+  <resultMap id="EmployeeResultMap" type="com.pdk.manage.model.sm.Employee">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="org_id" jdbcType="CHAR" property="orgId" />
+    <result column="role_id" jdbcType="CHAR" property="roleId" />
+    <result column="sex" jdbcType="SMALLINT" property="sex" />
+    <result column="id_card" jdbcType="CHAR" property="idCard" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="password" jdbcType="CHAR" property="password" />
+    <result column="header_img" jdbcType="CHAR" property="headerImg" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="memo" jdbcType="VARCHAR" property="memo" />
+    <result column="ts" jdbcType="TIMESTAMP" property="ts" />
+    <result column="dr" jdbcType="SMALLINT" property="dr" />
+    <result column="position_id" jdbcType="CHAR" property="positionId" />
+    <association property="role" javaType="com.pdk.manage.model.sm.Role"
+                 resultMap="com.pdk.manage.dao.sm.RoleDao.RoleResultMap" columnPrefix="role_"/>
+    <association property="org" javaType="com.pdk.manage.model.sm.Org"
+                 resultMap="com.pdk.manage.dao.sm.OrgDao.OrgResultMap" columnPrefix="org_"/>
+    <association property="position" javaType="com.pdk.manage.model.bd.Position"
+                 resultMap="com.pdk.manage.dao.bd.PositionDao.PositionResultMap" columnPrefix="position_"/>
+  </resultMap>
+
+  <select id="selectByLoginName" parameterType="java.lang.String" resultMap="EmployeeResultMap">
+    select
+      t.id,
+      t.code,
+      t.name,
+      t.org_id,
+      t.role_id,
+      t.sex,
+      t.id_card,
+      t.phone,
+      t.password,
+      t.header_img,
+      t.status,
+      t.memo,
+      t.ts,
+      t.dr,
+      t.position_id
+    from pdk_sm_employee t
+    where t.code = #{loginName,jdbcType=VARCHAR} and t.dr = 0 and t.status = 0;
+  </select>
+
+  <update id="updatePasswordByPrimaryKey" parameterType="java.lang.String">
+    update pdk_sm_employee
+    set password = #{newPassword,jdbcType=CHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+
+  <select id="selectByCondition" parameterType="java.lang.String" resultMap="EmployeeResultMap">
+    select
+      t.id,
+      t.code,
+      t.name,
+      t.org_id,
+      t.role_id,
+      t.sex,
+      t.id_card,
+      t.phone,
+      t.password,
+      t.header_img,
+      t.status,
+      t.memo,
+      t.ts,
+      t.dr,
+      r.name as role_name,
+      o.name as org_name,
+      p.name as position_name
+    from pdk_sm_employee t
+    left join pdk_sm_role r on t.role_id = r.id
+    left join pdk_sm_org o on t.org_id = o.id
+    left join pdk_bd_position p on t.position_id = p.id
+    where t.dr = 0
+    <if test="code != null and code !='' " >
+      and t.code like CONCAT('%',#{code,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="name != null and name != ''" >
+      and t.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="roleIds != null" >
+      and t.role_id in
+      <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="orgId != null and orgId != ''" >
+      and t.org_id in (select id from pdk_sm_org oin1 where oin1.incode LIKE
+          ( select CONCAT('%',oin.incode,'%') from pdk_sm_org oin where oin.id = #{orgId,jdbcType=VARCHAR} and oin.dr = 0 )
+      )
+    </if>
+  </select>
+
+  <select id="selectLikeByCondition" parameterType="java.lang.String" resultMap="EmployeeResultMap">
+    select DISTINCT * from (
+      select
+        t.id,
+        t.code,
+        t.name,
+        t.org_id,
+        t.role_id,
+        t.sex,
+        t.id_card,
+        t.phone,
+        t.password,
+        t.header_img,
+        t.status,
+        t.memo,
+        t.ts,
+        t.dr,
+        r.name as role_name,
+        o.name as org_name,
+        p.name as position_name
+      from pdk_sm_employee t
+      left join pdk_sm_role r on t.role_id = r.id
+      left join pdk_sm_org o on t.org_id = o.id
+      left join pdk_bd_position p on t.position_id = p.id
+      where t.dr = 0
+      <if test="code != null and code !='' " >
+        and t.code like CONCAT('%',#{code,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="name != null and name != ''" >
+        and t.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="roleIds != null" >
+        and t.role_id in
+        <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="orgId != null and orgId != ''" >
+        and t.org_id in (select id from pdk_sm_org oin1 where oin1.incode LIKE
+        ( select CONCAT('%',oin.incode,'%') from pdk_sm_org oin where oin.id = #{orgId,jdbcType=VARCHAR} and oin.dr = 0 )
+        )
+      </if>
+      and t.code like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        t.id,
+        t.code,
+        t.name,
+        t.org_id,
+        t.role_id,
+        t.sex,
+        t.id_card,
+        t.phone,
+        t.password,
+        t.header_img,
+        t.status,
+        t.memo,
+        t.ts,
+        t.dr,
+        r.name as role_name,
+        o.name as org_name,
+        p.name as position_name
+      from pdk_sm_employee t
+      left join pdk_sm_role r on t.role_id = r.id
+      left join pdk_sm_org o on t.org_id = o.id
+      left join pdk_bd_position p on t.position_id = p.id
+      where t.dr = 0
+      <if test="code != null and code !='' " >
+        and t.code like CONCAT('%',#{code,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="name != null and name != ''" >
+        and t.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="roleIds != null" >
+        and t.role_id in
+        <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="orgId != null and orgId != ''" >
+        and t.org_id in (select id from pdk_sm_org oin1 where oin1.incode LIKE
+        ( select CONCAT('%',oin.incode,'%') from pdk_sm_org oin where oin.id = #{orgId,jdbcType=VARCHAR} and oin.dr = 0 )
+        )
+      </if>
+      and t.name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        t.id,
+        t.code,
+        t.name,
+        t.org_id,
+        t.role_id,
+        t.sex,
+        t.id_card,
+        t.phone,
+        t.password,
+        t.header_img,
+        t.status,
+        t.memo,
+        t.ts,
+        t.dr,
+        r.name as role_name,
+        o.name as org_name,
+        p.name as position_name
+      from pdk_sm_employee t
+      left join pdk_sm_role r on t.role_id = r.id
+      left join pdk_sm_org o on t.org_id = o.id
+      left join pdk_bd_position p on t.position_id = p.id
+      where t.dr = 0
+      <if test="code != null and code !='' " >
+        and t.code like CONCAT('%',#{code,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="name != null and name != ''" >
+        and t.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="roleIds != null" >
+        and t.role_id in
+        <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="orgId != null and orgId != ''" >
+        and t.org_id in (select id from pdk_sm_org oin1 where oin1.incode LIKE
+        ( select CONCAT('%',oin.incode,'%') from pdk_sm_org oin where oin.id = #{orgId,jdbcType=VARCHAR} and oin.dr = 0 )
+        )
+      </if>
+      and t.id_card like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        t.id,
+        t.code,
+        t.name,
+        t.org_id,
+        t.role_id,
+        t.sex,
+        t.id_card,
+        t.phone,
+        t.password,
+        t.header_img,
+        t.status,
+        t.memo,
+        t.ts,
+        t.dr,
+        r.name as role_name,
+        o.name as org_name,
+        p.name as position_name
+      from pdk_sm_employee t
+      left join pdk_sm_role r on t.role_id = r.id
+      left join pdk_sm_org o on t.org_id = o.id
+      left join pdk_bd_position p on t.position_id = p.id
+      where t.dr = 0
+      <if test="code != null and code !='' " >
+        and t.code like CONCAT('%',#{code,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="name != null and name != ''" >
+        and t.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="roleIds != null" >
+        and t.role_id in
+        <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="orgId != null and orgId != ''" >
+        and t.org_id in (select id from pdk_sm_org oin1 where oin1.incode LIKE
+        ( select CONCAT('%',oin.incode,'%') from pdk_sm_org oin where oin.id = #{orgId,jdbcType=VARCHAR} and oin.dr = 0 )
+        )
+      </if>
+      and o.name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        t.id,
+        t.code,
+        t.name,
+        t.org_id,
+        t.role_id,
+        t.sex,
+        t.id_card,
+        t.phone,
+        t.password,
+        t.header_img,
+        t.status,
+        t.memo,
+        t.ts,
+        t.dr,
+        r.name as role_name,
+        o.name as org_name,
+        p.name as position_name
+      from pdk_sm_employee t
+      left join pdk_sm_role r on t.role_id = r.id
+      left join pdk_sm_org o on t.org_id = o.id
+      left join pdk_bd_position p on t.position_id = p.id
+      where t.dr = 0
+      <if test="code != null and code !='' " >
+        and t.code like CONCAT('%',#{code,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="name != null and name != ''" >
+        and t.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="roleIds != null" >
+        and t.role_id in
+        <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="orgId != null and orgId != ''" >
+        and t.org_id in (select id from pdk_sm_org oin1 where oin1.incode LIKE
+        ( select CONCAT('%',oin.incode,'%') from pdk_sm_org oin where oin.id = #{orgId,jdbcType=VARCHAR} and oin.dr = 0 )
+        )
+      </if>
+      and r.name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        t.id,
+        t.code,
+        t.name,
+        t.org_id,
+        t.role_id,
+        t.sex,
+        t.id_card,
+        t.phone,
+        t.password,
+        t.header_img,
+        t.status,
+        t.memo,
+        t.ts,
+        t.dr,
+        r.name as role_name,
+        o.name as org_name,
+        p.name as position_name
+      from pdk_sm_employee t
+      left join pdk_sm_role r on t.role_id = r.id
+      left join pdk_sm_org o on t.org_id = o.id
+      left join pdk_bd_position p on t.position_id = p.id
+      where t.dr = 0
+      <if test="code != null and code !='' " >
+        and t.code like CONCAT('%',#{code,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="name != null and name != ''" >
+        and t.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="roleIds != null" >
+        and t.role_id in
+        <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="orgId != null and orgId != ''" >
+        and t.org_id in (select id from pdk_sm_org oin1 where oin1.incode LIKE
+        ( select CONCAT('%',oin.incode,'%') from pdk_sm_org oin where oin.id = #{orgId,jdbcType=VARCHAR} and oin.dr = 0 )
+        )
+      </if>
+      and p.name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        t.id,
+        t.code,
+        t.name,
+        t.org_id,
+        t.role_id,
+        t.sex,
+        t.id_card,
+        t.phone,
+        t.password,
+        t.header_img,
+        t.status,
+        t.memo,
+        t.ts,
+        t.dr,
+        r.name as role_name,
+        o.name as org_name,
+        p.name as position_name
+      from pdk_sm_employee t
+      left join pdk_sm_role r on t.role_id = r.id
+      left join pdk_sm_org o on t.org_id = o.id
+      left join pdk_bd_position p on t.position_id = p.id
+      where t.dr = 0
+      <if test="code != null and code !='' " >
+        and t.code like CONCAT('%',#{code,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="name != null and name != ''" >
+        and t.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="roleIds != null" >
+        and t.role_id in
+        <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="orgId != null and orgId != ''" >
+        and t.org_id in (select id from pdk_sm_org oin1 where oin1.incode LIKE
+        ( select CONCAT('%',oin.incode,'%') from pdk_sm_org oin where oin.id = #{orgId,jdbcType=VARCHAR} and oin.dr = 0 )
+        )
+      </if>
+      and t.phone like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        t.id,
+        t.code,
+        t.name,
+        t.org_id,
+        t.role_id,
+        t.sex,
+        t.id_card,
+        t.phone,
+        t.password,
+        t.header_img,
+        t.status,
+        t.memo,
+        t.ts,
+        t.dr,
+        r.name as role_name,
+        o.name as org_name,
+        p.name as position_name
+      from pdk_sm_employee t
+      left join pdk_sm_role r on t.role_id = r.id
+      left join pdk_sm_org o on t.org_id = o.id
+      left join pdk_bd_position p on t.position_id = p.id
+      where t.dr = 0
+      <if test="code != null and code !='' " >
+        and t.code like CONCAT('%',#{code,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="name != null and name != ''" >
+        and t.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="roleIds != null" >
+        and t.role_id in
+        <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="orgId != null and orgId != ''" >
+        and t.org_id in (select id from pdk_sm_org oin1 where oin1.incode LIKE
+        ( select CONCAT('%',oin.incode,'%') from pdk_sm_org oin where oin.id = #{orgId,jdbcType=VARCHAR} and oin.dr = 0 )
+        )
+      </if>
+      and t.memo like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+    ) disT
+  </select>
+
+  <select id="mySelectPageByPositionId" parameterType="java.lang.String" resultMap="EmployeeResultMap">
+    select
+      t.id,
+      t.code,
+      t.name,
+      t.org_id,
+      t.role_id,
+      t.sex,
+      t.id_card,
+      t.phone,
+      t.password,
+      t.header_img,
+      t.status,
+      t.memo,
+      t.ts,
+      t.dr,
+      r.name as role_name,
+      o.name as org_name,
+      p.name as position_name
+    from pdk_sm_employee t
+    left join pdk_sm_role r on t.role_id = r.id
+    left join pdk_sm_org o on t.org_id = o.id
+    left join pdk_bd_position p on t.position_id = p.id
+    where t.dr = 0
+      and t.status = 0
+    <if test="positionId != null and positionId != ''" >
+      and t.position_id = #{positionId, jdbcType=CHAR}
+    </if>
+  </select>
+
+  <select id="mySelectLikePageByPositionId" parameterType="java.lang.String" resultMap="EmployeeResultMap">
+    select DISTINCT * from (
+      select
+        t.id,
+        t.code,
+        t.name,
+        t.org_id,
+        t.role_id,
+        t.sex,
+        t.id_card,
+        t.phone,
+        t.password,
+        t.header_img,
+        t.status,
+        t.memo,
+        t.ts,
+        t.dr,
+        r.name as role_name,
+        o.name as org_name,
+        p.name as position_name
+      from pdk_sm_employee t
+      left join pdk_sm_role r on t.role_id = r.id
+      left join pdk_sm_org o on t.org_id = o.id
+      left join pdk_bd_position p on t.position_id = p.id
+      where t.dr = 0
+      and t.status = 0
+      <if test="positionId != null and positionId != ''" >
+        and t.position_id = #{positionId, jdbcType=CHAR}
+      </if>
+      and t.code like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        t.id,
+        t.code,
+        t.name,
+        t.org_id,
+        t.role_id,
+        t.sex,
+        t.id_card,
+        t.phone,
+        t.password,
+        t.header_img,
+        t.status,
+        t.memo,
+        t.ts,
+        t.dr,
+        r.name as role_name,
+        o.name as org_name,
+        p.name as position_name
+      from pdk_sm_employee t
+      left join pdk_sm_role r on t.role_id = r.id
+      left join pdk_sm_org o on t.org_id = o.id
+      left join pdk_bd_position p on t.position_id = p.id
+      where t.dr = 0
+      and t.status = 0
+      <if test="positionId != null and positionId != ''" >
+        and t.position_id = #{positionId, jdbcType=CHAR}
+      </if>
+      and t.name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        t.id,
+        t.code,
+        t.name,
+        t.org_id,
+        t.role_id,
+        t.sex,
+        t.id_card,
+        t.phone,
+        t.password,
+        t.header_img,
+        t.status,
+        t.memo,
+        t.ts,
+        t.dr,
+        r.name as role_name,
+        o.name as org_name,
+        p.name as position_name
+      from pdk_sm_employee t
+      left join pdk_sm_role r on t.role_id = r.id
+      left join pdk_sm_org o on t.org_id = o.id
+      left join pdk_bd_position p on t.position_id = p.id
+      where t.dr = 0
+      and t.status = 0
+      <if test="positionId != null and positionId != ''" >
+        and t.position_id = #{positionId, jdbcType=CHAR}
+      </if>
+      and o.name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        t.id,
+        t.code,
+        t.name,
+        t.org_id,
+        t.role_id,
+        t.sex,
+        t.id_card,
+        t.phone,
+        t.password,
+        t.header_img,
+        t.status,
+        t.memo,
+        t.ts,
+        t.dr,
+        r.name as role_name,
+        o.name as org_name,
+        p.name as position_name
+      from pdk_sm_employee t
+      left join pdk_sm_role r on t.role_id = r.id
+      left join pdk_sm_org o on t.org_id = o.id
+      left join pdk_bd_position p on t.position_id = p.id
+      where t.dr = 0
+      and t.status = 0
+      <if test="positionId != null and positionId != ''" >
+        and t.position_id = #{positionId, jdbcType=CHAR}
+      </if>
+      and t.phone like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+    ) disT
+  </select>
+
+  <select id="getEmployee" parameterType="java.lang.String" resultMap="EmployeeResultMap">
+    select
+    t.id,
+    t.code,
+    t.name,
+    t.org_id,
+    t.role_id,
+    t.sex,
+    t.id_card,
+    t.phone,
+    t.password,
+    t.header_img,
+    t.status,
+    t.memo,
+    t.ts,
+    t.dr,
+    r.id as role_id,
+    r.name as role_name,
+    o.id as org_id,
+    o.name as org_name,
+    p.id as position_id,
+    p.name as position_name
+    from pdk_sm_employee t
+    left join pdk_sm_role r on t.role_id = r.id
+    left join pdk_sm_org o on t.org_id = o.id
+    left join pdk_bd_position p on t.position_id = p.id
+    where t.id = #{id,jdbcType=VARCHAR} and t.dr = 0;
+  </select>
+</mapper>

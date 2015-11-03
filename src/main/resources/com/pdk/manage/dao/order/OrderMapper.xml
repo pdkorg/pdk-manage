@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.order.OrderMapper" >
+  <resultMap id="BaseResultMap" type="com.pdk.manage.model.order.Order" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="flowtype_id" property="flowtypeId" jdbcType="CHAR" />
+    <result column="user_id" property="userId" jdbcType="CHAR" />
+    <result column="adress" property="adress" jdbcType="VARCHAR" />
+    <result column="delivery_status" property="deliveryStatus" jdbcType="SMALLINT" />
+    <result column="pay_type" property="payType" jdbcType="SMALLINT" />
+    <result column="reserve_time" property="reserveTime" jdbcType="TIMESTAMP" />
+    <result column="mny" property="mny" jdbcType="DECIMAL" />
+    <result column="actual_mny" property="actualMny" jdbcType="DECIMAL" />
+    <result column="coupon_mny" property="couponMny" jdbcType="DECIMAL" />
+    <result column="fee_mny" property="feeMny" jdbcType="DECIMAL"/>
+    <result column="pay_status" property="payStatus" jdbcType="SMALLINT" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="shop_manager_id" property="shopManagerId" jdbcType="CHAR" />
+    <result column="cs_id" property="csId" jdbcType="CHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="flow_instance_id" property="flowInstanceId" jdbcType="CHAR" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+    <result column="ywy_id" property="ywyId" jdbcType="CHAR" />
+    <result column="is_flow_finish" property="isFlowFinish" jdbcType="SMALLINT"/>
+    <result column="flow_action" property="flowAction" jdbcType="SMALLINT"/>
+  </resultMap>
+
+  <resultMap id="OrderTable" type="com.pdk.manage.model.order.OrderTable" >
+    <result column="id" property="id" jdbcType="CHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="flowtype_id" property="flowtypeId" jdbcType="CHAR" />
+    <result column="user_id" property="userId" jdbcType="CHAR" />
+    <result column="adress" property="adress" jdbcType="VARCHAR" />
+    <result column="delivery_status" property="deliveryStatus" jdbcType="SMALLINT" />
+    <result column="pay_type" property="payType" jdbcType="SMALLINT" />
+    <result column="reserve_time" property="reserveTime" />
+    <result column="mny" property="mny" jdbcType="DECIMAL" />
+    <result column="actual_mny" property="actualMny" jdbcType="DECIMAL" />
+    <result column="coupon_mny" property="couponMny" jdbcType="DECIMAL" />
+    <result column="fee_mny" property="feeMny" jdbcType="DECIMAL"/>
+    <result column="pay_status" property="payStatus" jdbcType="SMALLINT" />
+    <result column="start_time" property="startTime" />
+    <result column="end_time" property="endTime" />
+    <result column="shop_manager_id" property="shopManagerId" jdbcType="CHAR" />
+    <result column="cs_id" property="csId" jdbcType="CHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="flow_instance_id" property="flowInstanceId" jdbcType="CHAR" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+    <result column="ywy_id" property="ywyId" jdbcType="CHAR" />
+    <result column="is_flow_finish" property="isFlowFinish" jdbcType="SMALLINT"/>
+    <result column="flow_action" property="flowAction" jdbcType="SMALLINT"/>
+
+    <result column="flowTypeName" property="flowTypeName" jdbcType="VARCHAR" />
+    <result column="name" property="nickname" jdbcType="VARCHAR" />
+    <result column="userSex" property="userSex" jdbcType="VARCHAR"/>
+    <result column="real_name" property="realname" jdbcType="VARCHAR" />
+    <result column="phone" property="phonenum" jdbcType="VARCHAR" />
+    <result column="adress" property="buisTypeName" jdbcType="VARCHAR" />
+    <result column="leaderName" property="leaderName" jdbcType="VARCHAR" />
+    <result column="csname" property="waitertName" jdbcType="VARCHAR" />
+    <result column="ywyName" property="ywyName" jdbcType="VARCHAR" />
+    <result column="ywyPhone" property="ywyPhone" jdbcType="VARCHAR" />
+    <result column="reviewId" property="reviewId" jdbcType="VARCHAR"/>
+  </resultMap>
+  
+  <resultMap id="UserInfoForCoupon" type="com.pdk.manage.model.order.UserInfoForCoupon">
+    <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+    <result column="source_id" property="sourceId" jdbcType="VARCHAR"/>
+    <result column="name" property="name" jdbcType="VARCHAR"/>
+    <result column="real_name" property="realName" jdbcType="VARCHAR"/>
+    <result column="times" property="times" jdbcType="INTEGER"/>
+    <result column="pay_mny" property="payMny" jdbcType="DECIMAL"/>
+    <result column="register_time" property="registerTime" jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <resultMap id="CountNumModel" type="com.pdk.manage.model.order.CountNumModel">
+    <result column="unit_id" property="id" jdbcType="VARCHAR"/>
+    <result column="num" property="num" jdbcType="INTEGER"/>
+    <result column="flow_type_id" property="flowTypeId" jdbcType="VARCHAR"/>
+  </resultMap>
+
+  <resultMap id="YwyMnyInfoModel" type="com.pdk.manage.model.order.YwyMnyInfoModel">
+    <result column="mny" property="mny" jdbcType="DECIMAL"/>
+    <result column="orderCode" property="orderCode" jdbcType="VARCHAR"/>
+    <result column="orderId" property="orderId" jdbcType="VARCHAR"/>
+    <result column="ywyName" property="ywyName" jdbcType="VARCHAR"/>
+    <result column="tipMny" property="tipMny" jdbcType="DECIMAL"/>
+  </resultMap>
+
+  <resultMap id="reportIndexModel" type="com.pdk.manage.model.order.ReportIndexModel">
+    <result column="orderCount" property="orderCount" jdbcType="INTEGER"/>
+    <result column="feeOrderCount" property="feeOrderCount" jdbcType="INTEGER"/>
+    <result column="payedOrderCount" property="payedOrderCount" jdbcType="INTEGER"/>
+    <result column="mny" property="mny" jdbcType="DECIMAL"/>
+    <result column="couponMny" property="couponMny" jdbcType="DECIMAL"/>
+    <result column="feeMny" property="feeMny" jdbcType="DECIMAL"/>
+    <result column="payedMny" property="payedMny" jdbcType="DECIMAL"/>
+    <result column="unPayedMny" property="unPayedMny" jdbcType="DECIMAL"/>
+  </resultMap>
+
+  <resultMap id="orderFlowTypeModel" type="com.pdk.manage.model.order.OrderFlowTypeModel">
+    <result column="flowTypeName" property="flowTypeName" jdbcType="VARCHAR"/>
+    <result column="orderCount" property="orderCount" jdbcType="INTEGER"/>
+  </resultMap>
+
+  <select id="getOrderPageData" resultMap="OrderTable" parameterType="com.pdk.manage.model.order.OrderRequestModel">
+    SELECT a.id,a.code,a.flowtype_id,ft.name flowTypeName,a.user_id,a.adress,a.delivery_status,a.pay_type,DATE_FORMAT(a.reserve_time,'%Y-%m-%d %k:%i') reserve_time,a.mny,a.actual_mny,a.coupon_mny,a.pay_status,DATE_FORMAT(a.start_time,'%Y-%m-%d %k:%i:%s') start_time,DATE_FORMAT(a.end_time,'%Y-%m-%d %k:%i:%s') end_time,
+    a.shop_manager_id,e1.name leaderName,a.cs_id,e2.name csname,a.status,a.memo,a.flow_instance_id,a.ts,a.dr,
+      u.name,u.real_name,u.phone,u.sex userSex,a.ywy_id,e3.name ywyName,e3.phone ywyPhone,a.is_flow_finish,a.fee_mny,a.flow_action,
+    review.id AS reviewId
+    FROM pdk_order_order AS a LEFT JOIN pdk_sm_user AS u ON a.user_id = u.id
+    LEFT JOIN pdk_sm_employee AS e1 on a.shop_manager_id=e1.id
+    LEFT JOIN pdk_sm_employee AS e2 on a.cs_id=e2.id
+    LEFT JOIN pdk_sm_employee AS e3 on a.ywy_id=e3.id
+    LEFT JOIN pdk_flow_flowtype AS ft ON a.flowtype_id = ft.id
+    LEFT JOIN pdk_sm_employee_review AS review ON a.id = review.order_id
+    WHERE a.dr=0
+    <if test="orderId!=null and orderId !=''">
+      AND a.id = #{orderId}
+    </if>
+    <if test="orderCode!=null and orderCode !=''">
+      AND a.code = #{orderCode}
+    </if>
+    <if test="ywyid!=null and ywyid !=''">
+      AND a.ywy_id = #{ywyid}
+    </if>
+    <if test="waiterid!=null and waiterid !=''">
+      AND a.cs_id = #{waiterid}
+    </if>
+    <if test="flowtypeid!=null and flowtypeid !=''">
+      AND a.flowtype_id = #{flowtypeid}
+    </if>
+    <if test="customid!=null and customid !=''">
+      AND a.user_id = #{customid}
+    </if>
+    <if test="orderState!=null and orderState !=''">
+      AND a.status = #{orderState}
+    </if>
+    <if test="deliveryState!=null and deliveryState !=''">
+      AND a.delivery_status = #{deliveryState}
+    </if>
+    <if test="payStatus!=null and payStatus !=''">
+      AND a.pay_status = #{payStatus}
+    </if>
+    <if test="fromDate!=null and fromDate !=''">
+      AND  DATE(a.start_time) <![CDATA[>=]]> #{fromDate}
+    </if>
+    <if test="toDate!=null and toDate !=''">
+      AND DATE(a.start_time) <![CDATA[<=]]> #{toDate}
+    </if>
+    <if test="orderStr!=null and orderStr !=''">
+      ORDER BY ${orderStr}
+    </if>
+    <if test="pageSize>0">
+      LIMIT ${limitStart},${pageSize}
+    </if>
+  </select>
+
+  <select id="selectCountNum" resultType="int" parameterType="com.pdk.manage.model.order.OrderRequestModel">
+    SELECT COUNT(id) FROM pdk_order_order a
+    WHERE a.dr=0
+    <if test="orderId!=null and orderId !=''">
+      AND a.id = #{orderId}
+    </if>
+    <if test="orderCode!=null and orderCode !=''">
+      AND a.code = #{orderCode}
+    </if>
+    <if test="ywyid!=null and ywyid !=''">
+      AND a.ywy_id = #{ywyid}
+    </if>
+    <if test="waiterid!=null and waiterid !=''">
+      AND a.cs_id = #{waiterid}
+    </if>
+    <if test="flowtypeid!=null and flowtypeid !=''">
+      AND a.flowtype_id = #{flowtypeid}
+    </if>
+    <if test="customid!=null and customid !=''">
+      AND a.user_id = #{customid}
+    </if>
+    <if test="orderState!=null and orderState !=''">
+      AND a.status = #{orderState}
+    </if>
+    <if test="deliveryState!=null and deliveryState !=''">
+      AND a.delivery_status = #{deliveryState}
+    </if>
+    <if test="payStatus!=null and payStatus !=''">
+      AND a.pay_status = #{payStatus}
+    </if>
+    <if test="fromDate!=null and fromDate !=''">
+      AND  DATE(a.start_time) <![CDATA[>=]]> #{fromDate}
+    </if>
+    <if test="toDate!=null and toDate !=''">
+      AND DATE(a.start_time) <![CDATA[<=]]> #{toDate}
+    </if>
+  </select>
+
+  <select id="getOrderDataForChart" resultMap="BaseResultMap" parameterType="com.pdk.manage.model.order.OrderRequestModel">
+    SELECT id,code,flowtype_id,user_id,adress,delivery_status,pay_type,reserve_time,
+     mny, actual_mny,coupon_mny,pay_status,start_time,end_time,shop_manager_id,cs_id,
+    status,memo,flow_instance_id,ts,dr,ywy_id,is_flow_finish,fee_mny,flow_action
+    FROM pdk_order_order
+    WHERE dr=0 AND status != '4'
+    <if test="orderId!=null and orderId !=''">
+      AND id = #{orderId}
+    </if>
+    <if test="orderCode!=null and orderCode !=''">
+      AND code = #{orderCode}
+    </if>
+    <if test="customid!=null and customid !=''">
+      AND user_id = #{customid}
+    </if>
+    <if test="payStatus!=null and payStatus !=''">
+      AND pay_status = #{payStatus}
+    </if>
+    <if test="fromDate!=null and fromDate !=''">
+      AND  DATE(start_time) <![CDATA[>=]]> #{fromDate}
+    </if>
+    <if test="toDate!=null and toDate !=''">
+      AND DATE(start_time) <![CDATA[<=]]> #{toDate}
+    </if>
+    ORDER BY start_time DESC
+  </select>
+
+  <select id="getOrderDataByFlowArgs" parameterType="com.pdk.manage.model.order.OrderFlowRequestMode" resultMap="OrderTable">
+    SELECT a.id,a.code,a.flowtype_id,ft.name flowTypeName,a.user_id,a.adress,a.delivery_status,a.pay_type,DATE_FORMAT(a.reserve_time,'%Y-%m-%d %k:%i') reserve_time,a.mny,a.actual_mny,a.coupon_mny,a.pay_status,DATE_FORMAT(a.start_time,'%Y-%m-%d %k:%i:%s') start_time,DATE_FORMAT(a.end_time,'%Y-%m-%d %k:%i:%s') end_time,
+    a.shop_manager_id,e1.name leaderName,a.cs_id,e2.name csname,a.status,a.memo,a.flow_instance_id,a.ts,a.dr,
+    u.name,u.real_name,u.phone,u.sex userSex,a.ywy_id,e3.name ywyName,e3.phone ywyPhone,a.is_flow_finish,a.fee_mny,a.flow_action
+    FROM pdk_order_order AS a LEFT JOIN pdk_sm_user AS u ON a.user_id = u.id
+    LEFT JOIN pdk_sm_employee AS e1 on a.shop_manager_id=e1.id LEFT JOIN pdk_sm_employee AS e2 on a.cs_id=e2.id
+    LEFT JOIN pdk_sm_employee AS e3 on a.ywy_id=e3.id
+    LEFT JOIN pdk_flow_flowtype AS ft ON a.flowtype_id = ft.id
+    WHERE a.dr=0 and a.status!=3 AND a.status!=4
+    and a.flow_instance_id in (SELECT template_instance_id from pdk_flow_template_instanceunit ta where dr=0
+     <if test="flowTypeId!=null and flowTypeId!=''">
+       AND flow_type_id = #{flowTypeId}
+     </if>
+    <if test="templateUnitId!=null and templateUnitId!=''">
+      AND template_unit_id = #{templateUnitId} and iq = (select min(iq) from pdk_flow_template_instanceunit tb
+      where tb.template_instance_id = ta.template_instance_id AND (is_finish <![CDATA[<>]]>'Y' or  is_finish is null))
+    </if>
+    <if test="flowUnitId!=null and flowUnitId!=''">
+      AND template_unit_id IN (SELECT DISTINCT(id) FROM pdk_flow_template_unit where flow_unit_id = #{flowUnitId}
+      and role_id IN
+      <foreach collection="roleIds" item="item" index="index" separator="," open="(" close=")">
+        #{item}
+      </foreach>
+      and iq = (
+      select min(iq) from pdk_flow_template_instanceunit tb
+      where tb.template_instance_id = ta.template_instance_id AND (is_finish <![CDATA[<>]]>'Y' or is_finish is null)))
+    </if>
+     )
+    ORDER BY a.start_time DESC
+  </select>
+
+  <select id="getUserListForCoupon" resultMap="UserInfoForCoupon" parameterType="com.pdk.manage.model.order.OrderCouponRequestModel">
+    select
+      a.user_id user_id,
+      u.source_id source_id,
+      u.name,
+      u.real_name as real_name,
+      count(user_id) times,
+      sum(mny) payMny,
+      u.register_time registerTime
+    from pdk_order_order a
+    LEFT JOIN pdk_sm_user u ON a.user_id= u.id
+    where a.dr=0
+      and u.status=0
+      and a.status !=4
+      and a.pay_status=1
+      ${sqlWhere}
+    <if test="searchText != null and searchText != ''" >
+      and (
+      u.name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+      or u.real_name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+      )
+    </if>
+    GROUP BY user_id
+    HAVING 1=1
+    ${sqlHaving}
+  </select>
+
+  <select id="queryFinishedNum" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(id) from pdk_order_order
+    where dr=0 and ywy_id= #{userId} and is_flow_finish='1'
+  </select>
+
+  <select id="queryOrderNumByFlowUnitIds" parameterType="com.pdk.manage.model.order.OrderFlowUnitReqModel" resultMap="CountNumModel">
+    SELECT count(a.id) num,ta.flow_unit_id unit_id
+    FROM pdk_order_order AS a
+    LEFT JOIN pdk_flow_template_instanceunit ta on a.flow_instance_id=ta.template_instance_id
+    WHERE a.dr=0 and a.status!=3 AND a.status!=4
+    and iq = (
+    select min(iq) from pdk_flow_template_instanceunit tb
+      where tb.template_instance_id = ta.template_instance_id AND (is_finish !='Y' or  is_finish is null))
+    and ta.template_unit_id IN (
+      SELECT DISTINCT(id) FROM pdk_flow_template_unit
+      where role_id in
+      <foreach collection="roleList" item="item" index="index" separator="," open="(" close=")">
+        #{item}
+      </foreach>
+      and flow_unit_id in
+      <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+        #{item}
+      </foreach>
+    )
+    group by ta.flow_unit_id
+  </select>
+
+  <select id="queryOrderNumByTemplateUnitIds" parameterType="java.util.List" resultMap="CountNumModel">
+    SELECT count(a.id) num,ta.template_unit_id unit_id,ta.flow_type_id flow_type_id
+    FROM pdk_order_order AS a
+    LEFT JOIN pdk_flow_template_instanceunit ta on a.flow_instance_id=ta.template_instance_id
+    WHERE a.dr=0 and a.status!=3 AND a.status!=4
+    and iq = (
+    select min(iq) from pdk_flow_template_instanceunit tb
+    where tb.template_instance_id = ta.template_instance_id AND (is_finish !='Y' or  is_finish is null))
+    and ta.template_unit_id  IN
+    <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+      #{item}
+    </foreach>
+    group by ta.template_unit_id
+  </select>
+
+  <select id="queryByStartDate" resultMap="BaseResultMap">
+    select
+      id,
+      flowtype_id,
+      mny,
+      actual_mny,
+      coupon_mny,
+      fee_mny,
+      pay_status,
+      start_time,
+      status
+    from pdk_order_order
+    where status in (1, 2, 3)
+    <if test="fromDate != null" >
+      and start_time <![CDATA[ >= ]]> #{fromDate, jdbcType=TIMESTAMP}
+    </if>
+    <if test="toDate != null" >
+      and start_time <![CDATA[ <= ]]> #{toDate, jdbcType=TIMESTAMP}
+    </if>
+  </select>
+
+  <select id="queryOrderByDateAndName" resultMap="YwyMnyInfoModel" parameterType="java.lang.String">
+    SELECT a.mny mny,a.code orderCode,a.id orderId,e.name ywyName,a.fee_mny tipMny
+    from pdk_order_order AS a
+    LEFT JOIN pdk_sm_employee AS e on a.ywy_id=e.id
+    LEFT JOIN  pdk_flow_template_instanceunit b on a.flow_instance_id = b.template_instance_id
+    RIGHT JOIN (select * from pdk_flow_flowunit where flow_action_code='3') c ON b.flow_unit_id=c.id
+    where a.dr=0 AND a.is_flow_finish=1 AND a.pay_type = '0'
+    <if test="ywyId !=null and ywyId != ''">
+      AND a.ywy_id = #{ywyId}
+    </if>
+    AND DATE(b.finish_time) = #{queryDate}
+    ORDER BY e.name DESC
+  </select>
+
+  <select id="queryOrderInfo" resultMap="reportIndexModel">
+    select
+    count(id) AS orderCount,
+    sum(mny) as mny
+    from pdk_order_order
+    where status in (1, 2, 3)
+    <if test="fromDate != null" >
+      and start_time <![CDATA[ >= ]]> #{fromDate, jdbcType=DATE}
+    </if>
+    <if test="toDate != null" >
+      and start_time <![CDATA[ <= ]]> #{toDate, jdbcType=DATE}
+    </if>
+  </select>
+  <select id="queryOrderPayed" resultMap="reportIndexModel">
+    select
+    count(id) AS payedOrderCount,
+    sum(mny-coupon_mny+fee_mny) as payedMny
+    from pdk_order_order
+    where pay_status = 1
+    <if test="fromDate != null" >
+      and start_time <![CDATA[ >= ]]> #{fromDate, jdbcType=DATE}
+    </if>
+    <if test="toDate != null" >
+      and start_time <![CDATA[ <= ]]> #{toDate, jdbcType=DATE}
+    </if>
+  </select>
+  <select id="queryOrderUnPayed" resultMap="reportIndexModel">
+    select
+    sum(mny) as unPayedMny
+    from pdk_order_order
+    where pay_status = 0
+    <if test="fromDate != null" >
+      and start_time <![CDATA[ >= ]]> #{fromDate, jdbcType=DATE}
+    </if>
+    <if test="toDate != null" >
+      and start_time <![CDATA[ <= ]]> #{toDate, jdbcType=DATE}
+    </if>
+  </select>
+  <select id="queryOrderFeeInfo" resultMap="reportIndexModel">
+    select
+    count(id) AS feeOrderCount,
+    sum(fee_mny) as feeMny
+    from pdk_order_order
+    where pay_status = 1 and fee_mny > 0
+    <if test="fromDate != null" >
+      and start_time <![CDATA[ >= ]]> #{fromDate, jdbcType=DATE}
+    </if>
+    <if test="toDate != null" >
+      and start_time <![CDATA[ <= ]]> #{toDate, jdbcType=DATE}
+    </if>
+  </select>
+  <select id="queryOrderCouponInfo" resultMap="reportIndexModel">
+    select
+    count(id) AS couponOrderCount,
+    sum(coupon_mny) as couponMny
+    from pdk_order_order
+    where pay_status = 1 and coupon_mny > 0
+    <if test="fromDate != null" >
+      and start_time <![CDATA[ >= ]]> #{fromDate, jdbcType=DATE}
+    </if>
+    <if test="toDate != null" >
+      and start_time <![CDATA[ <= ]]> #{toDate, jdbcType=DATE}
+    </if>
+  </select>
+  <select id="queryOrderFlowTypeCount" resultMap="orderFlowTypeModel">
+    select
+      f.name AS flowTypeName,
+      count(o.flowtype_id) AS orderCount
+    from pdk_order_order o
+    inner join pdk_flow_flowtype f on f.id = o.flowtype_id
+    <if test="fromDate != null" >
+      and start_time <![CDATA[ >= ]]> #{fromDate, jdbcType=DATE}
+    </if>
+    <if test="toDate != null" >
+      and start_time <![CDATA[ <= ]]> #{toDate, jdbcType=DATE}
+    </if>
+    group by o.flowtype_id
+  </select>
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.flow.FlowTypeDao" >
+  <resultMap id="FlowTypeResultMap" type="com.pdk.manage.model.flow.FlowType" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="deliver_id" property="deliverId" jdbcType="VARCHAR" />
+    <result column="is_auto_assign_deliver" property="isAutoAssignDeliver" jdbcType="CHAR" />
+    <result column="memo" property="memo" jdbcType="CHAR" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+  </resultMap>
+
+  <select id="getFlowTypeForOrder" resultMap="FlowTypeResultMap">
+    SELECT id,code,name,status,memo,ts,dr, deliver_id, is_auto_assign_deliver  from pdk_flow_flowtype
+    where id in (SELECT flow_type_id from pdk_flow_template_unit where dr=0) and status =0 and dr =0
+  </select>
+
+</mapper>

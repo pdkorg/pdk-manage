@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.coupon.CouponUserRelationDao" >
+  <resultMap id="CouponResultMap" type="com.pdk.manage.model.coupon.CouponUserRelation" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="user_id" property="userId" jdbcType="CHAR" />
+    <result column="source_id" property="sourceId" jdbcType="CHAR" />
+    <result column="coupon_id" property="couponId" jdbcType="CHAR" />
+    <result column="template_id" property="templateId" jdbcType="CHAR" />
+    <result column="order_id" property="orderId" jdbcType="CHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="flow_type_id" property="flowTypeId" jdbcType="VARCHAR" />
+    <result column="send_mny" property="sendMny" jdbcType="DECIMAL" />
+    <result column="min_pay_mny" property="minPayMny" jdbcType="DECIMAL" />
+    <result column="begin_date" property="beginDate" jdbcType="TIMESTAMP" />
+    <result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+    <association property="flowType" javaType="com.pdk.manage.model.flow.FlowType"
+                 resultMap="com.pdk.manage.dao.flow.FlowTypeDao.FlowTypeResultMap" columnPrefix="flow_type_"/>
+  </resultMap>
+
+  <select id="selectUserCouponUnUseBySourceId" resultMap="CouponResultMap" >
+    select
+      r.id,
+      r.user_id,
+      r.source_id,
+      r.coupon_id,
+      r.template_id,
+      r.order_id,
+      r.status,
+      r.ts,
+      r.dr,
+      r.code,
+      r.name,
+      r.flow_type_id,
+      r.send_mny,
+      r.min_pay_mny,
+      r.begin_date,
+      r.end_date,
+      f.id as flow_type_id,
+      f.code as flow_type_code,
+      f.name as flow_type_name
+    from pdk_coupon_user_relation r
+    inner join pdk_flow_flowtype f on f.id = r.flow_type_id
+    where r.dr = 0
+    and r.status = 0
+    and r.source_id = #{sourceId, jdbcType=CHAR}
+    <![CDATA[ and r.begin_date <=  #{currDate,jdbcType=DATE} ]]>
+    <![CDATA[ and r.end_date >= #{currDate,jdbcType=DATE} ]]>
+  </select>
+  <select id="selectUnStartCouponUsedBySourceId" resultMap="CouponResultMap" >
+    select
+      r.id,
+      r.user_id,
+      r.source_id,
+      r.coupon_id,
+      r.template_id,
+      r.order_id,
+      r.status,
+      r.ts,
+      r.dr,
+      r.code,
+      r.name,
+      r.flow_type_id,
+      r.send_mny,
+      r.min_pay_mny,
+      r.begin_date,
+      r.end_date,
+      f.id as flow_type_id,
+      f.code as flow_type_code,
+      f.name as flow_type_name
+    from pdk_coupon_user_relation r
+    inner join pdk_flow_flowtype f on f.id = r.flow_type_id
+    where r.dr = 0
+    and r.status = 0
+    and r.source_id = #{sourceId, jdbcType=CHAR}
+    <![CDATA[ and r.begin_date > #{currDate,jdbcType=DATE} ]]>
+  </select>
+  <select id="selectUserCouponOverdueBySourceId" resultMap="CouponResultMap" >
+    select
+      r.id,
+      r.user_id,
+      r.source_id,
+      r.coupon_id,
+      r.template_id,
+      r.order_id,
+      r.status,
+      r.ts,
+      r.dr,
+      r.code,
+      r.name,
+      r.flow_type_id,
+      r.send_mny,
+      r.min_pay_mny,
+      r.begin_date,
+      r.end_date,
+      f.id as flow_type_id,
+      f.code as flow_type_code,
+      f.name as flow_type_name
+    from pdk_coupon_user_relation r
+    inner join pdk_flow_flowtype f on f.id = r.flow_type_id
+    where r.dr = 0
+    and r.source_id = #{sourceId, jdbcType=CHAR}
+    and (
+      <![CDATA[ r.end_date <  #{currDate,jdbcType=DATE} ]]>
+      or r.status = 1
+    )
+  </select>
+
+  <select id="selectUserCouponCanUseBySourceId" resultMap="CouponResultMap" >
+    select
+    r.id,
+    r.user_id,
+    r.source_id,
+    r.coupon_id,
+    r.template_id,
+    r.order_id,
+    r.status,
+    r.ts,
+    r.dr,
+    r.code,
+    r.name,
+    r.flow_type_id,
+    r.send_mny,
+    r.min_pay_mny,
+    r.begin_date,
+    r.end_date,
+    f.id as flow_type_id,
+    f.code as flow_type_code,
+    f.name as flow_type_name
+    from pdk_coupon_user_relation r
+    inner join pdk_flow_flowtype f on f.id = r.flow_type_id
+    where r.dr = 0
+    and r.status = 0
+    and r.user_id = #{userId, jdbcType=CHAR}
+    <![CDATA[ and r.begin_date <=  #{currDate,jdbcType=DATE} ]]>
+    <![CDATA[ and r.end_date >= #{currDate,jdbcType=DATE} ]]>
+    and r.flow_type_id = #{flowTypeId, jdbcType=CHAR}
+    <![CDATA[ and r.min_pay_mny <= #{mny, jdbcType=CHAR} ]]>
+  </select>
+
+  <select id="selectByIds" parameterType="java.lang.String" resultMap="CouponResultMap" >
+    select
+      r.id,
+      r.user_id,
+      r.source_id,
+      r.coupon_id,
+      r.template_id,
+      r.order_id,
+      r.status,
+      r.ts,
+      r.dr,
+      r.code,
+      r.name,
+      r.flow_type_id,
+      r.send_mny,
+      r.min_pay_mny,
+      r.begin_date,
+      r.end_date,
+      f.id as flow_type_id,
+      f.code as flow_type_code,
+      f.name as flow_type_name
+    from pdk_coupon_user_relation r
+    inner join pdk_flow_flowtype f on f.id = r.flow_type_id
+    where
+    <if test="ids != null" >
+      r.id in
+      <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="selectBySendRelation" resultMap="CouponResultMap" >
+    select
+      r.id,
+      r.user_id,
+      r.source_id,
+      r.coupon_id,
+      r.template_id,
+      r.order_id,
+      r.status,
+      r.ts,
+      r.dr,
+      r.code,
+      r.name,
+      r.flow_type_id,
+      r.send_mny,
+      r.min_pay_mny,
+      r.begin_date,
+      r.end_date
+    from pdk_coupon_user_relation r
+    where r.dr = 0
+      and r.template_id = #{templateId, jdbcType=CHAR}
+      and r.user_id = #{userId, jdbcType=CHAR}
+      <![CDATA[ and create_time >= #{currDate, jdbcType=DATE} ]]>
+  </select>
+
+
+  <update id="deleteUserCouponByTemplateId">
+    update pdk_coupon_user_relation set dr = 1 where dr = 0 and template_id = #{templateId, jdbcType=VARCHAR}
+  </update>
+</mapper>

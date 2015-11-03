@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.flow.FlowTemplateDao" >
+  <resultMap id="FlowTemplateResultMap" type="com.pdk.manage.model.flow.FlowTemplate" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="flow_type_id" property="flowTypeId" jdbcType="CHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+    <association property="flowType" javaType="com.pdk.manage.model.flow.FlowType"
+                 resultMap="com.pdk.manage.dao.flow.FlowTypeDao.FlowTypeResultMap" columnPrefix="flow_type_" />
+    <collection property="flowTemplateUnitList" ofType="com.pdk.manage.model.flow.FlowTemplateUnit" column="id"
+                select="com.pdk.manage.dao.flow.FlowTemplateUnitDao.selectTemplateUnitByTemplate" />
+  </resultMap>
+
+  <select id="getFlowTemplate" resultMap="FlowTemplateResultMap" parameterType="java.lang.String">
+    SELECT
+        t.id,
+        t.flow_type_id,
+        t. STATUS,
+        t.memo,
+        t.ts,
+        t.dr,
+        p.id AS flow_type_id,
+        p. NAME AS flow_type_name,
+        p. CODE AS flow_type_code,
+        p. STATUS AS flow_type_status,
+        p.memo AS flow_type_memo,
+        p.ts AS flow_type_ts,
+        p.dr AS flow_type_dr,
+        p.is_auto_assign_deliver AS flow_type_is_auto_assign_deliver,
+        p.deliver_id AS flow_type_deliver_id
+    FROM
+        pdk_flow_template t
+    INNER JOIN pdk_flow_flowtype p ON t.flow_type_id = p.id
+    WHERE
+        t.dr = 0
+    AND t.flow_type_id = #{flowTypeId}
+  </select>
+
+  <update id="deleteFlowTemplateByFlowTypes">
+      update pdk_flow_template set dr = 1 where dr = 0 and flow_type_id in
+      <foreach collection="list" item="item" open="(" separator="," close=")">
+          #{item,}
+      </foreach>
+  </update>
+
+</mapper>

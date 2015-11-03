@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.sm.UserDao" >
+  <resultMap id="UserResultMap" type="com.pdk.manage.model.sm.User" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <id column="source_id" property="sourceId" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="SMALLINT" />
+    <result column="real_name" property="realName" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="SMALLINT" />
+    <result column="age" property="age" jdbcType="SMALLINT" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="register_time" property="registerTime" jdbcType="TIMESTAMP" />
+    <result column="un_register_time" property="unRegisterTime" jdbcType="TIMESTAMP" />
+    <result column="header_img" property="headerImg" jdbcType="CHAR" />
+    <result column="event_key" property="eventKey" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+    <association property="addr" javaType="com.pdk.manage.model.bd.Address"
+                 resultMap="com.pdk.manage.dao.bd.AddressDao.AddressResultMap" columnPrefix="address_"/>
+  </resultMap>
+
+  <select id="selectByCondition" parameterType="java.lang.String" resultMap="UserResultMap">
+    select
+    u.id,
+    u.source_id,
+    u.name,
+    u.type,
+    u.real_name,
+    u.sex,
+    u.age,
+    u.phone,
+    u.address,
+    u.register_time,
+    u.un_register_time,
+    u.header_img,
+    u.status,
+    u.event_key,
+    u.memo,
+    u.ts,
+    u.dr,
+    a.id as address_id,
+    a.full_address as address_full_address
+    from pdk_sm_user u
+    left join pdk_bd_address a on u.id = a.user_id and a.is_default = 'Y' and a.dr = 0
+    where u.dr = 0
+    <if test="qryType != -1 and qryType != null" >
+      and u.type = #{qryType,jdbcType=SMALLINT}
+    </if>
+    <if test="qryName != null and qryName != ''" >
+      and u.name like CONCAT('%',#{qryName,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="fromDate!=null">
+      <![CDATA[   and u.register_time >=  #{fromDate,jdbcType=TIMESTAMP}   ]]>
+    </if>
+    <if test="toDate!=null">
+      <![CDATA[   and u.register_time <=  #{toDate,jdbcType=TIMESTAMP}   ]]>
+    </if>
+    <if test="qryAddr!=null and qryAddr != ''">
+      and a.full_address like CONCAT('%',#{qryAddr,jdbcType=VARCHAR},'%')
+    </if>
+  </select>
+  <select id="selectLikeByCondition" parameterType="java.lang.String" resultMap="UserResultMap">
+    select DISTINCT * from (
+      select
+        u.id,
+        u.source_id,
+        u.name,
+        u.type,
+        u.real_name,
+        u.sex,
+        u.age,
+        u.phone,
+        u.address,
+        u.register_time,
+        u.un_register_time,
+        u.header_img,
+        u.status,
+        u.event_key,
+        u.memo,
+        u.ts,
+        u.dr,
+        a.id as address_id,
+        a.full_address as address_full_address
+      from pdk_sm_user u
+      left join pdk_bd_address a on u.id = a.user_id and a.is_default = 'Y' and a.dr = 0
+      where u.dr = 0
+      <if test="qryType != -1 and qryType != null" >
+        and u.type = #{qryType,jdbcType=SMALLINT}
+      </if>
+      <if test="qryName != null and qryName != ''" >
+        and u.name like CONCAT('%',#{qryName,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="fromDate!=null">
+        <![CDATA[   and u.register_time >=  #{fromDate,jdbcType=TIMESTAMP}   ]]>
+      </if>
+      <if test="toDate!=null">
+        <![CDATA[   and u.register_time <=  #{toDate,jdbcType=TIMESTAMP}   ]]>
+      </if>
+      <if test="qryAddr!=null and qryAddr != ''">
+        and a.full_address like CONCAT('%',#{qryAddr,jdbcType=VARCHAR},'%')
+      </if>
+      and u.name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        u.id,
+        u.source_id,
+        u.name,
+        u.type,
+        u.real_name,
+        u.sex,
+        u.age,
+        u.phone,
+        u.address,
+        u.register_time,
+        u.un_register_time,
+        u.header_img,
+        u.status,
+        u.event_key,
+        u.memo,
+        u.ts,
+        u.dr,
+        a.id as address_id,
+        a.full_address as address_full_address
+      from pdk_sm_user u
+      left join pdk_bd_address a on u.id = a.user_id and a.is_default = 'Y' and a.dr = 0
+      where u.dr = 0
+      <if test="qryType != -1 and qryType != null" >
+        and u.type = #{qryType,jdbcType=SMALLINT}
+      </if>
+      <if test="qryName != null and qryName != ''" >
+        and u.name like CONCAT('%',#{qryName,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="fromDate!=null">
+        <![CDATA[   and u.register_time >=  #{fromDate,jdbcType=TIMESTAMP}   ]]>
+      </if>
+      <if test="toDate!=null">
+        <![CDATA[   and u.register_time <=  #{toDate,jdbcType=TIMESTAMP}   ]]>
+      </if>
+      <if test="qryAddr!=null and qryAddr != ''">
+        and a.full_address like CONCAT('%',#{qryAddr,jdbcType=VARCHAR},'%')
+      </if>
+      and u.type like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        u.id,
+        u.source_id,
+        u.name,
+        u.type,
+        u.real_name,
+        u.sex,
+        u.age,
+        u.phone,
+        u.address,
+        u.register_time,
+        u.un_register_time,
+        u.header_img,
+        u.status,
+        u.event_key,
+        u.memo,
+        u.ts,
+        u.dr,
+        a.id as address_id,
+        a.full_address as address_full_address
+      from pdk_sm_user u
+      left join pdk_bd_address a on u.id = a.user_id and a.is_default = 'Y' and a.dr = 0
+      where u.dr = 0
+      <if test="qryType != -1 and qryType != null" >
+        and u.type = #{qryType,jdbcType=SMALLINT}
+      </if>
+      <if test="qryName != null and qryName != ''" >
+        and u.name like CONCAT('%',#{qryName,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="fromDate!=null">
+        <![CDATA[   and u.register_time >=  #{fromDate,jdbcType=TIMESTAMP}   ]]>
+      </if>
+      <if test="toDate!=null">
+        <![CDATA[   and u.register_time <=  #{toDate,jdbcType=TIMESTAMP}   ]]>
+      </if>
+      <if test="qryAddr!=null and qryAddr != ''">
+        and a.full_address like CONCAT('%',#{qryAddr,jdbcType=VARCHAR},'%')
+      </if>
+      and u.real_name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        u.id,
+        u.source_id,
+        u.name,
+        u.type,
+        u.real_name,
+        u.sex,
+        u.age,
+        u.phone,
+        u.address,
+        u.register_time,
+        u.un_register_time,
+        u.header_img,
+        u.status,
+        u.event_key,
+        u.memo,
+        u.ts,
+        u.dr,
+        a.id as address_id,
+        a.full_address as address_full_address
+      from pdk_sm_user u
+      left join pdk_bd_address a on u.id = a.user_id and a.is_default = 'Y' and a.dr = 0
+      where u.dr = 0
+      <if test="qryType != -1 and qryType != null" >
+        and u.type = #{qryType,jdbcType=SMALLINT}
+      </if>
+      <if test="qryName != null and qryName != ''" >
+        and u.name like CONCAT('%',#{qryName,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="fromDate!=null">
+        <![CDATA[   and u.register_time >=  #{fromDate,jdbcType=TIMESTAMP}   ]]>
+      </if>
+      <if test="toDate!=null">
+        <![CDATA[   and u.register_time <=  #{toDate,jdbcType=TIMESTAMP}   ]]>
+      </if>
+      <if test="qryAddr!=null and qryAddr != ''">
+        and a.full_address like CONCAT('%',#{qryAddr,jdbcType=VARCHAR},'%')
+      </if>
+      and u.phone like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        u.id,
+        u.source_id,
+        u.name,
+        u.type,
+        u.real_name,
+        u.sex,
+        u.age,
+        u.phone,
+        u.address,
+        u.register_time,
+        u.un_register_time,
+        u.header_img,
+        u.status,
+        u.event_key,
+        u.memo,
+        u.ts,
+        u.dr,
+        a.id as address_id,
+        a.full_address as address_full_address
+      from pdk_sm_user u
+      left join pdk_bd_address a on u.id = a.user_id and a.is_default = 'Y' and a.dr = 0
+      where u.dr = 0
+      <if test="qryType != -1 and qryType != null" >
+        and u.type = #{qryType,jdbcType=SMALLINT}
+      </if>
+      <if test="qryName != null and qryName != ''" >
+        and u.name like CONCAT('%',#{qryName,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="fromDate!=null">
+        <![CDATA[   and u.register_time >=  #{fromDate,jdbcType=TIMESTAMP}   ]]>
+      </if>
+      <if test="toDate!=null">
+        <![CDATA[   and u.register_time <=  #{toDate,jdbcType=TIMESTAMP}   ]]>
+      </if>
+      <if test="qryAddr!=null and qryAddr != ''">
+        and a.full_address like CONCAT('%',#{qryAddr,jdbcType=VARCHAR},'%')
+      </if>
+      and a.full_address like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+    ) disT
+  </select>
+
+  <select id="selectRef" parameterType="java.lang.String" resultMap="UserResultMap">
+    select
+      u.id,
+      u.source_id,
+      u.name,
+      u.type,
+      u.real_name,
+      u.sex,
+      u.age,
+      u.phone,
+      u.address,
+      u.register_time,
+      u.un_register_time,
+      u.header_img,
+      u.status,
+      u.event_key,
+      u.memo,
+      u.ts,
+      u.dr
+    from pdk_sm_user u
+    where u.dr = 0
+  </select>
+  <select id="selectLikeRef" parameterType="java.lang.String" resultMap="UserResultMap">
+    select DISTINCT * from (
+      select
+        u.id,
+        u.source_id,
+        u.name,
+        u.type,
+        u.real_name,
+        u.sex,
+        u.age,
+        u.phone,
+        u.address,
+        u.register_time,
+        u.un_register_time,
+        u.header_img,
+        u.status,
+        u.event_key,
+        u.memo,
+        u.ts,
+        u.dr
+      from pdk_sm_user u
+      where u.dr = 0
+      and u.name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        u.id,
+        u.source_id,
+        u.name,
+        u.type,
+        u.real_name,
+        u.sex,
+        u.age,
+        u.phone,
+        u.address,
+        u.register_time,
+        u.un_register_time,
+        u.header_img,
+        u.status,
+        u.event_key,
+        u.memo,
+        u.ts,
+        u.dr
+      from pdk_sm_user u
+      where u.dr = 0
+      and u.real_name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select
+        u.id,
+        u.source_id,
+        u.name,
+        u.type,
+        u.real_name,
+        u.sex,
+        u.age,
+        u.phone,
+        u.address,
+        u.register_time,
+        u.un_register_time,
+        u.header_img,
+        u.status,
+        u.event_key,
+        u.memo,
+        u.ts,
+        u.dr
+      from pdk_sm_user u
+      where u.dr = 0
+      and u.phone like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+    ) disT
+  </select>
+
+  <select id="findBySourceId" parameterType="java.lang.String" resultMap="UserResultMap">
+    select id, source_id, name, type, real_name, sex, age, phone, address, register_time, un_register_time,
+    header_img, status, memo, event_key, ts, dr
+    from pdk_sm_user
+    where dr = 0 and status = 0 and source_id = #{sourceId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="findAllBySourceId" parameterType="java.lang.String" resultMap="UserResultMap">
+    select id, source_id, name, type, real_name, sex, age, phone, address, register_time, un_register_time,
+    header_img, status, memo, event_key, ts, dr
+    from pdk_sm_user
+    where dr = 0 and source_id = #{sourceId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="findUserBySourceId" parameterType="java.lang.String" resultMap="UserResultMap">
+    select id, source_id, name, type, real_name, sex, age, phone, address, register_time, un_register_time,
+    header_img, status, memo, event_key, ts, dr
+    from pdk_sm_user
+    where dr = 0 and status = 0 and source_id = #{sourceId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="findOldUserBySourceId" parameterType="java.lang.String" resultMap="UserResultMap">
+    select id, source_id, name, type, real_name, sex, age, phone, address, register_time, un_register_time,
+    header_img, status, memo, event_key, ts, dr
+    from pdk_sm_user
+    where dr = 0 and source_id = #{sourceId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectById" parameterType="java.lang.String" resultMap="UserResultMap">
+    select
+    u.id,
+    u.source_id,
+    u.name,
+    u.type,
+    u.real_name,
+    u.sex,
+    u.age,
+    u.phone,
+    u.address,
+    u.register_time,
+    u.un_register_time,
+    u.header_img,
+    u.status,
+    u.event_key,
+    u.memo,
+    u.ts,
+    u.dr,
+    a.id as address_id,
+    a.full_address as address_full_address
+    from pdk_sm_user u
+    left join pdk_bd_address a on u.id = a.user_id and a.is_default = 'Y' and a.dr = 0
+    where u.dr = 0 and u.id = #{id, jdbcType=CHAR};
+  </select>
+
+  <select id="findUserByIds" parameterType="java.lang.String" resultMap="UserResultMap">
+    select id, source_id, name, type, real_name, sex, age, phone, address, register_time, un_register_time,
+    header_img, status, memo, event_key, ts, dr
+    from pdk_sm_user
+    where
+    <if test="ids != null" >
+      id in
+      <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </select>
+  <select id="selectNewUserCount" resultType="java.lang.Integer" >
+    select count(1) from pdk_sm_user where register_time <![CDATA[ >= ]]> #{currDate, jdbcType=DATE}
+  </select>
+  <select id="selectNewUserKeepCount" resultType="java.lang.Integer" >
+    select count(1) from pdk_sm_user where register_time <![CDATA[ >= ]]> #{currDate, jdbcType=DATE} and status = 0
+  </select>
+</mapper>

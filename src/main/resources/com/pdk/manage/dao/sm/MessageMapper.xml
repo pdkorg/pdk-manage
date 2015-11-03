@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.MessageDao" >
+  <resultMap id="MessageResultMap" type="com.pdk.manage.model.sm.Message" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="employee_id" property="employeeId" jdbcType="CHAR" />
+    <result column="fr_employee_id" property="frEmployeeId" jdbcType="CHAR" />
+    <result column="type" property="type" jdbcType="SMALLINT" />
+    <result column="is_read" property="isRead" jdbcType="CHAR" />
+    <result column="is_load" property="isLoad" jdbcType="CHAR" />
+    <result column="message" property="message" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+    <association property="employee" javaType="com.pdk.manage.model.sm.Employee"
+                 resultMap="com.pdk.manage.dao.sm.EmployeeDao.EmployeeResultMap" columnPrefix="employee_"/>
+    <association property="frEmployee" javaType="com.pdk.manage.model.sm.Employee"
+                 resultMap="com.pdk.manage.dao.sm.EmployeeDao.EmployeeResultMap" columnPrefix="fr_employee_"/>
+  </resultMap>
+
+  <select id="selectByEmployeeId" parameterType="java.lang.String" resultMap="MessageResultMap">
+    select
+      msg.id,
+      msg.employee_id,
+      msg.type,
+      msg.is_read,
+      msg.is_load,
+      msg.message,
+      msg.create_time,
+      msg.ts,
+      msg.dr,
+      e.id as employee_id,
+      e.name as employee_name,
+      e.header_img as employee_header_img,
+      fre.id as fr_employee_id,
+      fre.name as fr_employee_name,
+      fre.header_img as fr_employee_header_img
+    from pdk_message msg
+    left join pdk_sm_employee e on e.id = msg.employee_id
+    left join pdk_sm_employee fre on fre.id = msg.employee_id
+    where msg.dr = 0 and msg.is_read = 'N' and msg.employee_id = #{employeeId, jdbcType=CHAR}
+  </select>
+
+  <select id="selectNewMessageByEmployeeId" parameterType="java.lang.String" resultMap="MessageResultMap">
+    select
+    msg.id,
+    msg.employee_id,
+    msg.type,
+    msg.is_read,
+    msg.is_load,
+    msg.message,
+    msg.create_time,
+    msg.ts,
+    msg.dr,
+    e.id as employee_id,
+    e.name as employee_name,
+    e.header_img as employee_header_img,
+    fre.id as fr_employee_id,
+    fre.name as fr_employee_name,
+    fre.header_img as fr_employee_header_img
+    from pdk_message msg
+    left join pdk_sm_employee e on e.id = msg.employee_id
+    left join pdk_sm_employee fre on fre.id = msg.employee_id
+    where msg.dr = 0 and msg.is_read = 'N' and msg.employee_id = #{employeeId, jdbcType=CHAR}
+    and msg.is_load = 'N'
+  </select>
+</mapper>

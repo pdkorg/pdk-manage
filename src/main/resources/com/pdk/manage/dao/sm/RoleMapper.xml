@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.sm.RoleDao" >
+  <resultMap id="RoleResultMap" type="com.pdk.manage.model.sm.Role" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+  </resultMap>
+
+  <select id="selectByIds" parameterType="java.lang.String" resultMap="RoleResultMap">
+    select id, code, name, status, memo, ts, dr
+    from pdk_sm_role
+    where dr = 0
+    <if test="roleIds != null" >
+      and id in
+      <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="selectStatusEnable" parameterType="java.lang.String" resultMap="RoleResultMap">
+    select id, code, name, status, memo, ts, dr
+    from pdk_sm_role
+    where dr = 0 and status = 0
+    order by code asc
+  </select>
+
+  <select id="select4Auxiliary" parameterType="java.lang.String" resultMap="RoleResultMap">
+    select id, code, name, status, memo, ts, dr
+    from pdk_sm_role
+    where dr = 0 and status = 0
+    and id not in ( select a.role_id from pdk_sm_employee_auxiliary a where a.dr = 0 and a.employee_id = #{employeeId, jdbcType=CHAR} )
+    and id <![CDATA[ <> ]]> (select role_id from pdk_sm_employee where id = #{employeeId, jdbcType=CHAR} )
+  </select>
+
+  <select id="selectLike4Auxiliary" parameterType="java.lang.String" resultMap="RoleResultMap">
+    SELECT DISTINCT * FROM (
+      select id, code, name, status, memo, ts, dr
+      from pdk_sm_role
+      where dr = 0 and status = 0
+      and id not in ( select a.role_id from pdk_sm_employee_auxiliary a where a.dr = 0 and a.employee_id = #{employeeId, jdbcType=CHAR} )
+      and id <![CDATA[ <> ]]> (select role_id from pdk_sm_employee where id = #{employeeId, jdbcType=CHAR} )
+      and code like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select id, code, name, status, memo, ts, dr
+      from pdk_sm_role
+      where dr = 0 and status = 0
+      and id not in ( select a.role_id from pdk_sm_employee_auxiliary a where a.dr = 0 and a.employee_id = #{employeeId, jdbcType=CHAR} )
+      and id <![CDATA[ <> ]]> (select role_id from pdk_sm_employee where id = #{employeeId, jdbcType=CHAR} )
+      and name like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+
+      UNION ALL
+
+      select id, code, name, status, memo, ts, dr
+      from pdk_sm_role
+      where dr = 0 and status = 0
+      and id not in ( select a.role_id from pdk_sm_employee_auxiliary a where a.dr = 0 and a.employee_id = #{employeeId, jdbcType=CHAR} )
+      and id <![CDATA[ <> ]]> (select role_id from pdk_sm_employee where id = #{employeeId, jdbcType=CHAR} )
+      and memo like CONCAT('%',#{searchText,jdbcType=VARCHAR},'%')
+    ) disT
+  </select>
+
+  <select id="selectAuxiliaryByEmployeeId" parameterType="java.lang.String" resultMap="RoleResultMap" >
+    select id, code, name, status, memo, ts, dr
+    from pdk_sm_role
+    where dr = 0 and status = 0 and id in ( select a.role_id from pdk_sm_employee_auxiliary a where a.employee_id = #{employeeId, jdbcType=CHAR} )
+  </select>
+</mapper>

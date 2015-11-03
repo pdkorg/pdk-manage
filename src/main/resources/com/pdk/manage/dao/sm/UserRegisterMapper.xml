@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.sm.UserRegisterInfoDao" >
+  <resultMap id="UserRegisterResultMap" type="com.pdk.manage.model.sm.UserRegisterInfo" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <id column="user_id" property="userId" jdbcType="CHAR" />
+    <id column="source_id" property="sourceId" jdbcType="VARCHAR" />
+    <result column="register_time" property="registerTime" jdbcType="TIMESTAMP" />
+    <result column="un_register_time" property="unRegisterTime" jdbcType="TIMESTAMP" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+  </resultMap>
+
+  <select id="getByUserId" parameterType="java.lang.String" resultMap="UserRegisterResultMap" >
+    select
+      id,
+      user_id,
+      source_id,
+      register_time,
+      un_register_time,
+      ts,
+      dr
+    from pdk_sm_user_register_info
+    where dr = 0 and un_register_time is null and user_id = #{userId, jdbcType=CHAR}
+  </select>
+
+  <select id="findAllBySourceId" parameterType="java.lang.String" resultMap="UserRegisterResultMap">
+    select
+      id,
+      user_id,
+      source_id,
+      register_time,
+      un_register_time,
+      ts,
+      dr
+    from pdk_sm_user_register_info
+    where dr = 0 and source_id = #{sourceId,jdbcType=VARCHAR}
+  </select>
+</mapper>

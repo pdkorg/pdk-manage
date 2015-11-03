@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.flow.FlowTemplateInstanceUnitDao" >
+  <resultMap id="FlowTemplateInstanceUnitResultMap" type="com.pdk.manage.model.flow.FlowTemplateInstanceUnit" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="template_instance_id" property="templateInstanceId" jdbcType="CHAR" />
+    <result column="flow_type_id" property="flowTypeId" jdbcType="CHAR" />
+    <result column="flow_unit_id" property="flowUnitId" jdbcType="CHAR" />
+    <result column="template_unit_id" property="templateUnitId" jdbcType="CHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="is_finish" property="isFinish" jdbcType="CHAR" />
+    <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP" />
+    <result column="op_employee_id" property="opEmployeeId" jdbcType="CHAR" />
+    <result column="op_time" property="opTime" jdbcType="TIMESTAMP" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+    <result column="dr" property="dr" jdbcType="SMALLINT" />
+    <result column="is_push_msg" property="isPushMsg" jdbcType="CHAR" />
+    <result column="msg_template" property="msgTemplate" jdbcType="VARCHAR" />
+    <result column="iq" property="iq" jdbcType="SMALLINT" />
+
+    <association property="flowUnit" javaType="com.pdk.manage.model.flow.FlowUnit"
+                 resultMap="com.pdk.manage.dao.flow.FlowUnitDao.FlowUnitResultMap" columnPrefix="flow_unit_"/>
+  </resultMap>
+
+  <select id="getFlowTemplateInstanceUnitList" parameterType="java.lang.String" resultMap="FlowTemplateInstanceUnitResultMap">
+    SELECT
+    u.id,
+    u.template_instance_id,
+    u.flow_type_id,
+    u.flow_unit_id,
+    u.template_unit_id,
+    u.status,
+    u.memo,
+    u.is_finish,
+    u.finish_time,
+    u.op_employee_id,
+    u.op_time,
+    u.ts,
+    u.dr,
+    u.is_push_msg,
+    u.msg_template,
+    u.iq,
+    f.code AS flow_unit_code,
+    f.name AS flow_unit_name,
+    f.status AS flow_unit_status,
+    f.memo AS flow_unit_memo,
+    f.ts AS flow_unit_ts,
+    f.dr AS flow_unit_dr,
+    f.order_status AS flow_unit_order_status,
+    f.flow_action_code AS flow_unit_flow_action_code
+    FROM
+    pdk_flow_template_instanceunit u
+    LEFT JOIN pdk_flow_flowunit f ON u.flow_unit_id = f.id
+    WHERE
+    u.dr = 0 AND f.dr = 0
+    AND u.template_instance_id = #{flowInstanceId}
+    ORDER BY u.iq
+  </select>
+</mapper>

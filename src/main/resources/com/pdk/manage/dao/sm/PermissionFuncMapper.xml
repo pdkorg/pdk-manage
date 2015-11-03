@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdk.manage.dao.sm.PermissionFuncDao">
+  <resultMap id="PermissionFuncResultMap" type="com.pdk.manage.model.sm.PermissionFunc">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="role_id" jdbcType="CHAR" property="roleId" />
+    <result column="func_id" jdbcType="CHAR" property="funcId" />
+    <result column="ts" jdbcType="TIMESTAMP" property="ts" />
+    <result column="dr" jdbcType="SMALLINT" property="dr" />
+  </resultMap>
+
+  <select id="getByRoleId" parameterType="java.lang.String" resultMap="PermissionFuncResultMap">
+    select id, role_id, func_id, ts, dr
+    from pdk_sm_permission_func
+    where dr = 0 and role_id = #{roleId, jdbcType=CHAR}
+  </select>
+</mapper>
